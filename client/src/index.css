@@ -1,0 +1,78 @@
+/**
+ * File: client/src/index.css
+ * Description: Global stylesheet for CareerLaunch. Imports Tailwind CSS directives,
+ *              customizes the default scrollbars, and defines circular progress styling.
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+/* Custom scrollbars for a premium SaaS feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-navy-950;
+}
+
+.light ::-webkit-scrollbar-track {
+  @apply bg-navy-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-navy-700 rounded-sm;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-accent;
+}
+
+/* React Circular Progress Bar Styling custom overrides */
+.CircularProgressbar .CircularProgressbar-path {
+  stroke: #2563EB !important; /* Premium Blue Accent */
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.CircularProgressbar .CircularProgressbar-trail {
+  stroke: #1E293B !important; /* Dark Navy border */
+}
+
+.light .CircularProgressbar .CircularProgressbar-trail {
+  stroke: #E2E8F0 !important; /* Light border */
+}
+
+.CircularProgressbar .CircularProgressbar-text {
+  fill: #F8FAFC !important;
+  font-size: 20px !important;
+  font-weight: 700;
+}
+
+.light .CircularProgressbar .CircularProgressbar-text {
+  fill: #0F172A !important;
+}
+
+/* Custom animation keyframes for Toast notifications */
+@keyframes slideIn {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.2s ease-out forwards;
+}
+
