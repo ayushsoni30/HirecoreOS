@@ -1,6 +1,6 @@
 /**
  * File: client/src/index.css
- * Description: Global stylesheet for CareerLaunch. Imports Tailwind CSS directives,
+ * Description: Global stylesheet for SuccessBuddy AI. Imports Tailwind CSS directives,
  *              customizes the default scrollbars, and defines circular progress styling.
  */
 @tailwind base;
@@ -8,71 +8,168 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
-    @apply antialiased;
+    @apply antialiased font-sans bg-navy-950 text-white selection:bg-accent/30 selection:text-white;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
   }
 }
 
 /* Custom scrollbars for a premium SaaS feel */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-navy-950;
+  @apply bg-navy-950/80;
 }
 
 .light ::-webkit-scrollbar-track {
-  @apply bg-navy-100;
+  @apply bg-navy-50;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-navy-700 rounded-sm;
+  @apply bg-navy-800 rounded-full border-2 border-transparent bg-clip-padding transition-colors duration-300;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent;
+  @apply bg-accent/60;
 }
 
 /* React Circular Progress Bar Styling custom overrides */
+.CircularProgressbar {
+  filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.15));
+}
+
 .CircularProgressbar .CircularProgressbar-path {
-  stroke: #2563EB !important; /* Premium Blue Accent */
+  stroke: #3B82F6 !important; /* Premium Blue Accent */
   stroke-linecap: round;
   transition: stroke-dashoffset 1s ease-in-out;
 }
 
 .CircularProgressbar .CircularProgressbar-trail {
-  stroke: #1E293B !important; /* Dark Navy border */
+  stroke: rgba(255, 255, 255, 0.05) !important; /* Dark Navy border */
 }
 
 .light .CircularProgressbar .CircularProgressbar-trail {
-  stroke: #E2E8F0 !important; /* Light border */
+  stroke: rgba(0, 0, 0, 0.05) !important; /* Light border */
 }
 
 .CircularProgressbar .CircularProgressbar-text {
   fill: #F8FAFC !important;
+  font-family: 'Outfit', sans-serif;
   font-size: 20px !important;
   font-weight: 700;
 }
 
 .light .CircularProgressbar .CircularProgressbar-text {
-  fill: #0F172A !important;
+  fill: #0A0F29 !important;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+  backdrop-filter: blur(12px);
+  background: rgba(15, 19, 34, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.light .glass-panel {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.glass-card {
+  backdrop-filter: blur(16px);
+  background: rgba(15, 19, 34, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+.light .glass-card {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+/* Glow decoration styles */
+.bg-glow-spot {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Custom animation keyframes for Toast notifications */
 @keyframes slideIn {
   from {
-    transform: translateY(1rem);
+    transform: translateY(1.5rem) scale(0.95);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
 
 .animate-slide-in {
-  animation: slideIn 0.2s ease-out forwards;
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Splash Loader Animations */
+@keyframes splash-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
+  }
+}
+
+.animate-splash-pulse {
+  animation: splash-pulse 2s infinite ease-in-out;
+}
+
+@keyframes progress-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-progress-shimmer {
+  animation: progress-shimmer 1.5s infinite linear;
+}
+
+/* Code Highlighting Custom Scroll */
+pre::-webkit-scrollbar {
+  height: 4px;
+}
+pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+pre::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 

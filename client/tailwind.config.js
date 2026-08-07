@@ -17,35 +17,42 @@ export default {
     extend: {
       colors: {
         background: {
-          dark: '#0F172A',
+          dark: '#080B16',
           light: '#F8FAFC',
         },
         text: {
           dark: '#F8FAFC',
-          light: '#0F172A',
+          light: '#0A0F29',
         },
-        accent: '#2563EB', // Primary: Professional Blue
-        primary: '#2563EB',
-        secondary: '#7C3AED', // Secondary: Elegant Purple
-        cyanAccent: '#06B6D4', // Accent: Cyan
-        success: '#22C55E',
+        accent: '#3B82F6', // Primary Accent: Electric Blue
+        primary: '#3B82F6',
+        secondary: '#8B5CF6', // Secondary Accent: Vivid Purple
+        cyanAccent: '#06B6D4', // Accent: Neon Cyan
+        success: '#10B981',
         warning: '#F59E0B',
         error: '#EF4444',
         navy: {
-          950: '#0F172A', // Dark Theme Background
-          900: '#1E293B', // Dark Theme Surface/Card
-          850: '#243247', // Dark Theme Hover/Inner Card
-          800: '#334155', // Dark Theme Border
-          700: '#475569', 
+          950: '#080B16', // Deep Cosmic Navy Background
+          900: '#0F1322', // Sleek Navy Surface/Card
+          850: '#151B30', // Surface Hover / Selected States
+          800: '#1E2540', // Borders & Separators
+          700: '#2E3A5E', // Muted Text/Muted Borders
           600: '#475569', 
           500: '#64748B', // Light Theme Secondary Text
-          400: '#CBD5E1', // Dark Theme Secondary Text
+          400: '#94A3B8', // Dark Theme Secondary Text
           100: '#E2E8F0', // Light Theme Border
           50: '#F8FAFC'  // Light Theme Background
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Outfit"', 'sans-serif'],
+      },
+      boxShadow: {
+        'glow-primary': '0 0 20px rgba(59, 130, 246, 0.15)',
+        'glow-secondary': '0 0 20px rgba(139, 92, 246, 0.15)',
+        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glass-light': '0 8px 32px 0 rgba(31, 38, 135, 0.08)',
       }
     },
   },
