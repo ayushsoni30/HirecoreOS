@@ -50,10 +50,10 @@ const CustomCursor = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden hidden md:block">
+    <div className="pointer-events-none fixed inset-0 z-[100000] overflow-hidden hidden md:block">
       {/* Central Sharp Crosshair Dot */}
       <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-accent pointer-events-none z-50"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-accent pointer-events-none z-[100002]"
         animate={{
           x: mousePosition.x - 3,
           y: mousePosition.y - 3,
@@ -64,7 +64,7 @@ const CustomCursor = () => {
 
       {/* Sharp Corner Square Bounding Cursor */}
       <motion.div
-        className="fixed top-0 left-0 border border-accent/80 pointer-events-none z-40 bg-accent/5"
+        className="fixed top-0 left-0 border border-accent/80 pointer-events-none z-[100001] bg-accent/5"
         animate={{
           x: mousePosition.x - (isHovered ? 20 : 10),
           y: mousePosition.y - (isHovered ? 20 : 10),
