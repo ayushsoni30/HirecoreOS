@@ -54,12 +54,13 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 | **Frontend Framework** | React 19, React Router v7, Vite |
 | **Styling & Aesthetics** | Vanilla CSS, Tailwind CSS, Framer Motion |
 | **UI Components** | Lucide React, React Circular Progressbar, React Markdown, Rehype Highlight |
-| **Backend Runtime** | Node.js, Express.js |
+| **Backend Runtime** | Node.js v22 (LTS), Express.js |
 | **Database & ORM** | MongoDB, Mongoose v8 |
 | **AI Inference Engine** | Cerebras Cloud API (`llama-3.3-70b` / `gpt-oss-120b`) |
 | **Document Processing** | `pdf-parse` (Client-to-Server Multipart Upload) |
 | **Media Storage** | Cloudinary API, Multer Storage Engine |
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`), Google Auth Library (`google-auth-library`), `bcryptjs` |
+| **Containerization** | Docker (`node:22-alpine`), Docker Compose (`mongo:7-jammy`) |
 
 ---
 
@@ -67,11 +68,16 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 
 ```
 hirecore-os/
+├── docker-compose.yml           # Root Docker Orchestration Config
+├── LICENSE                      # MIT Open Source License
+├── CONTRIBUTION.md              # Code Style & PR Guidelines
+├── CONTRIBUTING.md              # Contribution Reference Pointer
+├── README.md                    # Institutional System Documentation
 ├── client/                      # React 19 Frontend Web Application
 │   ├── src/
 │   │   ├── components/          # Reusable Academic UI Components
 │   │   │   ├── AuthContext.jsx  # Global Auth & Modal Context
-│   │   │   ├── CustomCursor.jsx # Academic Precision Pointer
+│   │   │   ├── CustomCursor.jsx # Academic Precision Pointer (z-[100000])
 │   │   │   ├── HcLogo.jsx       # Institutional Brand Mark
 │   │   │   ├── Navbar.jsx       # Header Navigation Bar
 │   │   │   ├── Sidebar.jsx      # Navigation Menu
@@ -96,6 +102,8 @@ hirecore-os/
 │   └── package.json
 │
 └── server/                      # Express REST API Server
+    ├── Dockerfile               # Production Docker Container Specification (node:22-alpine)
+    ├── .dockerignore            # Build Context Exclusion Rules
     ├── config/
     │   ├── db.js                # MongoDB Mongoose Connection
     │   └── cloudinary.js        # Cloudinary SDK Configuration
@@ -177,7 +185,7 @@ PORT=5000
 MONGO_URI=mongodb://localhost:27017/hirecore_os
 JWT_SECRET=your_secure_jwt_secret_key_here
 CEREBRAS_API_KEY=your_cerebras_api_key_here
-CEREBRAS_MODEL=llama-3.3-70b
+CEREBRAS_MODEL=gpt-oss-120b
 GOOGLE_CLIENT_ID=your_google_client_id_here
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
@@ -198,36 +206,50 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
 ## 7. Local Installation & Launch
 
 ### Prerequisites
-* Node.js v18.0.0 or higher
+* Node.js v22.0.0 or higher (LTS)
 * npm v9.0.0 or higher
+* Docker & Docker Compose (Optional)
 * MongoDB instance running locally or via MongoDB Atlas
 
-### Step 1: Clone Repository
-```bash
-git clone https://github.com/rishhbh/hirecore-os.git
-cd hirecore-os
-```
+### Option A: Local Native Setup
 
-### Step 2: Install & Start Backend Server
-```bash
-cd server
-npm install
-npm run dev
-```
-The server will start listening on `http://localhost:5000`.
+1. **Clone Repository**:
+   ```bash
+   git clone https://github.com/ayushsoni30/CF.git
+   cd hirecore-os
+   ```
 
-### Step 3: Install & Start Frontend Client
-In a new terminal window:
+2. **Start Backend Server**:
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
+
+3. **Start Frontend Client**:
+   In a separate terminal:
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
+
+### Option B: Docker Containerized Setup
+Run both the Express API container (`node:22-alpine`) and MongoDB container (`mongo:7-jammy`) simultaneously:
 ```bash
-cd client
-npm install
-npm run dev
+docker compose up --build
 ```
-The application will be accessible at `http://localhost:5173`.
+The Express API will be exposed at `http://localhost:5000` and MongoDB at `localhost:27017`.
 
 ---
 
-## 8. Core Developers & Faculty
+## 8. Contributions & Code Standards
+
+We welcome community contributions. Please read our [Contribution Guidelines](./CONTRIBUTION.md) before submitting Pull Requests.
+
+---
+
+## 9. Core Developers & Faculty
 
 * **Rishabh Sharma** — Backend Engineer & AI Systems Lead
   * GitHub: [/rishhbh](https://github.com/rishhbh)
@@ -241,6 +263,6 @@ The application will be accessible at `http://localhost:5173`.
 
 ---
 
-## 9. License
+## 10. License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE](./LICENSE) for details.
