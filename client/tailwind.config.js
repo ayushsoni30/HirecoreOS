@@ -1,10 +1,11 @@
 /**
  * File: client/tailwind.config.js
  * Description: TailwindCSS configuration defining the typography, dark/light theme colors,
- *              and content source paths for CareerLaunch.
+ *              and content source paths for HireCore OS.
  */
 
 import plugin from 'tailwindcss/plugin';
+import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -15,48 +16,78 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      borderRadius: {
+        none: '0px',
+        sm: '0px',
+        DEFAULT: '0px',
+        md: '0px',
+        lg: '0px',
+        xl: '0px',
+        '2xl': '0px',
+        '3xl': '0px',
+        full: '0px',
+      },
       colors: {
         background: {
-          dark: '#080B16',
-          light: '#F8FAFC',
+          dark: '#141312',
+          light: '#FBF9F5',
         },
         text: {
-          dark: '#F8FAFC',
-          light: '#0A0F29',
+          dark: '#ECE8E1',
+          light: '#1C1917',
         },
-        accent: '#3B82F6', // Primary Accent: Electric Blue
-        primary: '#3B82F6',
-        secondary: '#8B5CF6', // Secondary Accent: Vivid Purple
-        cyanAccent: '#06B6D4', // Accent: Neon Cyan
-        success: '#10B981',
-        warning: '#F59E0B',
-        error: '#EF4444',
+        accent: '#9A3412', // Terracotta Accent
+        primary: '#854F2B', // Warm Ochre
+        secondary: '#D97706', // Academic Gold / Warm Amber
+        cyanAccent: '#1E293B', // Academic Navy
+        success: '#15803D',
+        warning: '#B45309',
+        error: '#B91C1C',
+        paper: {
+          50: '#FBF9F5',
+          100: '#F4F1EA',
+          200: '#E5E0D8',
+          300: '#D5CEC3',
+          400: '#A8A29E',
+          500: '#78716C',
+          600: '#57534E',
+          700: '#383430',
+          800: '#25221F',
+          900: '#1D1B19',
+          950: '#141312',
+        },
         navy: {
-          950: '#080B16', // Deep Cosmic Navy Background
-          900: '#0F1322', // Sleek Navy Surface/Card
-          850: '#151B30', // Surface Hover / Selected States
-          800: '#1E2540', // Borders & Separators
-          700: '#2E3A5E', // Muted Text/Muted Borders
-          600: '#475569', 
-          500: '#64748B', // Light Theme Secondary Text
-          400: '#94A3B8', // Dark Theme Secondary Text
-          100: '#E2E8F0', // Light Theme Border
-          50: '#F8FAFC'  // Light Theme Background
+          950: '#141312',
+          900: '#1D1B19',
+          850: '#25221F',
+          800: '#332F2B',
+          700: '#443F3A',
+          600: '#57534E',
+          500: '#78716C',
+          400: '#A8A29E',
+          200: '#E5E0D8',
+          100: '#E5E0D8',
+          50: '#FBF9F5',
         }
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
-        display: ['"Outfit"', 'sans-serif'],
+        serif: ['"Libertinus Serif"', '"EB Garamond"', 'Georgia', 'serif'],
+        sans: ['"Libertinus Serif"', '"EB Garamond"', 'Georgia', 'serif'],
+        display: ['"Libertinus Serif"', '"EB Garamond"', 'Georgia', 'serif'],
+        mono: ['"JetBrains Mono"', 'Courier New', 'monospace'],
       },
       boxShadow: {
-        'glow-primary': '0 0 20px rgba(59, 130, 246, 0.15)',
-        'glow-secondary': '0 0 20px rgba(139, 92, 246, 0.15)',
-        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-        'glass-light': '0 8px 32px 0 rgba(31, 38, 135, 0.08)',
+        'glow-primary': 'none',
+        'glow-secondary': 'none',
+        'glass-dark': 'none',
+        'glass-light': 'none',
+        'academic': '2px 2px 0px 0px rgba(0, 0, 0, 0.1)',
+        'academic-dark': '2px 2px 0px 0px rgba(255, 255, 255, 0.05)',
       }
     },
   },
   plugins: [
+    typography,
     plugin(function({ addVariant }) {
       addVariant('light', '.light &');
     })

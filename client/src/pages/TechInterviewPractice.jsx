@@ -2,6 +2,7 @@
  * File: client/src/pages/TechInterviewPractice.jsx
  * Description: Technical interview wizard. Generates topic-specific questions,
  *              guides user through answers, evaluates submissions, and lists per-question feedback.
+ *              Redesigned with Libertinus Serif, sharp 0px corners, and academic paper layout.
  */
 
 import { useState } from 'react';
@@ -9,8 +10,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useApi } from '../hooks/useApi';
 import { useToast } from '../components/ToastContext';
 import { 
-  Code, ArrowRight, ArrowLeft, Send, Loader2, 
-  CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, RefreshCw, Terminal, Clock, Star
+  Code, ArrowRight, ArrowLeft, Send, 
+  CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, RefreshCw, Terminal, Star
 } from 'lucide-react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -115,13 +116,18 @@ const TechInterviewPractice = () => {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-8">
+    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8 font-serif text-left">
       
       {/* Page Header */}
-      <div className="text-left space-y-2">
-        <h2 className="text-2xl font-extrabold tracking-tight">Tech Interview Practice</h2>
-        <p className="text-xs sm:text-sm text-navy-400 light:text-navy-500 font-normal leading-relaxed">
-          Prepare for real-world technical assessments. Choose a technology to start a simulated Q&A flow and get detailed feedback.
+      <div className="border-b border-paper-800 light:border-paper-200 pb-4 space-y-1">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-accent block">
+          [MODULE_03 // SUBJECT_EXAMINATION]
+        </span>
+        <h2 className="text-2xl font-serif font-normal tracking-tight text-paper-50 light:text-paper-900">
+          Tech Interview Practice
+        </h2>
+        <p className="text-xs sm:text-sm text-paper-400 light:text-paper-600 font-normal leading-relaxed">
+          Select a technical discipline to begin a simulated candidate examination. Respond to generated questions and receive a comprehensive academic evaluation.
         </p>
       </div>
 
@@ -130,34 +136,36 @@ const TechInterviewPractice = () => {
         {step === 'select' && (
           <motion.div 
             key="select-step"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-6 text-left"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="space-y-6"
           >
-            <div className="flex items-center gap-2 border-b border-navy-800/60 light:border-navy-100 pb-3">
-              <Terminal className="h-5 w-5 text-accent" />
-              <h3 className="text-base sm:text-lg font-bold tracking-tight">Select a Technology</h3>
+            <div className="flex items-center gap-2 border-b border-paper-800 light:border-paper-200 pb-2">
+              <Terminal className="h-4.5 w-4.5 text-accent" />
+              <h3 className="text-base font-serif font-bold tracking-tight text-paper-50 light:text-paper-900">
+                Select Examination Subject
+              </h3>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {TECHS.map((tech) => (
-                <motion.button
-                  whileHover={{ y: -4, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+              {TECHS.map((tech, idx) => (
+                <button
                   key={tech}
                   onClick={() => handleStartInterview(tech)}
-                  className="flex items-center justify-between p-5 rounded-2xl border border-navy-800/80 bg-navy-900/60 light:bg-white light:border-navy-200 text-left hover:border-accent hover:bg-navy-850/50 light:hover:bg-navy-50/50 transition-all duration-300 group shadow-sm hover:shadow-glow-primary"
+                  className="flex items-center justify-between p-4 border border-paper-800 bg-paper-900/60 hover:border-accent hover:bg-paper-850/60 light:bg-white light:border-paper-200 light:hover:border-accent transition-all duration-150 group text-left"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-navy-950/80 light:bg-navy-50 flex items-center justify-center text-navy-400 light:text-navy-600 group-hover:text-accent border border-navy-800/60 light:border-navy-100 transition-colors">
-                      <Code className="h-5 w-5" />
-                    </div>
-                    <span className="font-extrabold text-xs sm:text-sm">{tech}</span>
+                    <span className="font-mono text-[10px] text-accent font-bold">
+                      [{String(idx + 1).padStart(2, '0')}]
+                    </span>
+                    <span className="font-serif font-bold text-xs sm:text-sm text-paper-50 light:text-paper-900">
+                      {tech}
+                    </span>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-navy-500 group-hover:text-accent group-hover:translate-x-1 transition-all" />
-                </motion.button>
+                  <ArrowRight className="h-4 w-4 text-paper-500 group-hover:text-accent group-hover:translate-x-0.5 transition-all" />
+                </button>
               ))}
             </div>
           </motion.div>
@@ -172,13 +180,10 @@ const TechInterviewPractice = () => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center py-24 gap-4"
           >
-            <div className="relative flex items-center justify-center">
-              <div className="absolute h-16 w-16 rounded-full border-4 border-accent/20 animate-pulse" />
-              <Loader2 className="h-10 w-10 animate-spin text-accent" />
-            </div>
-            <div className="space-y-1.5 text-center">
-              <h3 className="font-extrabold text-base sm:text-lg">Generating Questions</h3>
-              <p className="text-xs text-navy-400 max-w-[280px]">Curating targeted interview queries for {selectedTech} using Gemini AI...</p>
+            <div className="w-12 h-12 border-2 border-accent border-t-transparent animate-spin" />
+            <div className="space-y-1 text-center font-serif">
+              <h3 className="font-bold text-base text-paper-50 light:text-paper-900">Generating Questions</h3>
+              <p className="font-mono text-xs text-paper-400">Constructing examination queries for {selectedTech}...</p>
             </div>
           </motion.div>
         )}
@@ -191,13 +196,10 @@ const TechInterviewPractice = () => {
             exit={{ opacity: 0 }}
             className="flex flex-col items-center justify-center py-24 gap-4"
           >
-            <div className="relative flex items-center justify-center">
-              <div className="absolute h-16 w-16 rounded-full border-4 border-secondary/20 animate-pulse" />
-              <Loader2 className="h-10 w-10 animate-spin text-secondary" />
-            </div>
-            <div className="space-y-1.5 text-center">
-              <h3 className="font-extrabold text-base sm:text-lg">Evaluating Responses</h3>
-              <p className="text-xs text-navy-400 max-w-[280px]">Grading answers and drafting senior reviewer suggestions...</p>
+            <div className="w-12 h-12 border-2 border-secondary border-t-transparent animate-spin" />
+            <div className="space-y-1 text-center font-serif">
+              <h3 className="font-bold text-base text-paper-50 light:text-paper-900">Evaluating Responses</h3>
+              <p className="font-mono text-xs text-paper-400">Analysing answers and formulating reviewer feedback...</p>
             </div>
           </motion.div>
         )}
@@ -206,71 +208,65 @@ const TechInterviewPractice = () => {
         {step === 'interview' && (
           <motion.div 
             key="interview-step"
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="p-6 md:p-8 rounded-3xl border border-navy-800/80 bg-navy-900/60 light:bg-white light:border-navy-200 shadow-xl space-y-6 text-left relative overflow-hidden"
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25 }}
+            className="p-6 md:p-8 border border-paper-800 bg-paper-900/80 light:bg-white light:border-paper-200 space-y-6"
           >
-            {/* Background Glow */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-
             {/* Progress Header */}
-            <div className="flex justify-between items-center border-b border-navy-800/80 light:border-navy-100 pb-4 relative z-10">
+            <div className="flex justify-between items-center border-b border-paper-800 light:border-paper-200 pb-4">
               <div className="space-y-1">
-                <span className="px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest bg-accent/15 text-accent border border-accent/20 rounded-full">
-                  {selectedTech} Mock
+                <span className="font-mono text-[9px] uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent px-2 py-0.5">
+                  [{selectedTech}_EXAM]
                 </span>
-                <h3 className="text-base sm:text-lg font-extrabold mt-2">
+                <h3 className="text-base sm:text-lg font-serif font-bold text-paper-50 light:text-paper-900 mt-2">
                   Question {currentIdx + 1} of {questions.length}
                 </h3>
               </div>
-              <span className="text-xs sm:text-sm text-navy-400 font-bold">
-                {Math.round(((currentIdx + 1) / questions.length) * 100)}% Complete
+              <span className="font-mono text-xs text-paper-400">
+                PROGRESS: {Math.round(((currentIdx + 1) / questions.length) * 100)}%
               </span>
             </div>
 
             {/* Progress Bar */}
-            <div className="w-full bg-navy-950 light:bg-navy-100 h-1.5 rounded-full overflow-hidden relative z-10">
+            <div className="w-full bg-paper-950 light:bg-paper-100 h-1 relative overflow-hidden">
               <div 
-                className="bg-gradient-to-r from-accent to-secondary h-1.5 rounded-full transition-all duration-500 ease-out"
+                className="bg-accent h-full transition-all duration-300"
                 style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
               />
             </div>
 
-            {/* Question Text in Code Terminal Frame */}
-            <div className="p-5 rounded-2xl bg-navy-950/80 light:bg-navy-50 border border-navy-800/80 light:border-navy-100 relative z-10">
-              <div className="flex items-center gap-1.5 mb-2.5 pb-2 border-b border-navy-800/40 light:border-navy-100">
-                <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
-                <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80" />
-                <div className="h-2.5 w-2.5 rounded-full bg-green-500/80" />
-                <span className="text-[10px] text-navy-500 font-semibold font-mono ml-2">interviewer_question.md</span>
-              </div>
-              <p className="text-sm sm:text-base font-bold leading-relaxed text-text-dark light:text-text-light">
+            {/* Question Card */}
+            <div className="p-5 border border-paper-800 bg-paper-950 light:bg-paper-50 space-y-2">
+              <span className="font-mono text-[10px] text-paper-500 uppercase tracking-wider block">
+                [EXAMINATION_QUERY]
+              </span>
+              <p className="text-sm sm:text-base font-serif font-bold leading-relaxed text-paper-50 light:text-paper-900">
                 {questions[currentIdx]}
               </p>
             </div>
 
             {/* Answer Input */}
-            <div className="space-y-2 relative z-10">
-              <label htmlFor="answer-input" className="text-[10px] font-extrabold text-navy-400 uppercase tracking-widest">
-                Your Response
+            <div className="space-y-2">
+              <label htmlFor="answer-input" className="font-mono text-[10px] uppercase tracking-widest text-paper-400 block">
+                Candidate Answer Submission
               </label>
               <textarea
                 id="answer-input"
-                className="w-full p-4 rounded-2xl border border-navy-800/80 bg-navy-950/40 text-text-dark focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition-all duration-300 light:bg-white light:border-navy-200 light:text-text-light min-h-[160px] text-xs sm:text-sm leading-relaxed"
-                placeholder="Type your detailed answer here... (Take your time, describe concepts clearly with details)"
+                className="w-full p-4 border border-paper-800 bg-paper-950/60 text-paper-50 focus:border-accent focus:outline-none transition-colors light:bg-white light:border-paper-300 light:text-paper-900 min-h-[160px] text-xs sm:text-sm font-serif leading-relaxed"
+                placeholder="Detail your answer comprehensively with key technical concepts..."
                 value={answers[currentIdx]}
                 onChange={(e) => handleAnswerChange(e.target.value)}
               />
             </div>
 
             {/* Navigation Controls */}
-            <div className="flex justify-between items-center pt-4 border-t border-navy-800/80 light:border-navy-100 relative z-10">
+            <div className="flex justify-between items-center pt-4 border-t border-paper-800 light:border-paper-200">
               <button
                 onClick={handlePrev}
                 disabled={currentIdx === 0}
-                className="px-5 py-2.5 rounded-xl border border-navy-800/80 light:border-navy-200 hover:bg-navy-850/60 light:hover:bg-navy-50 flex items-center gap-2 font-extrabold text-xs sm:text-sm disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
+                className="px-5 py-2.5 border border-paper-800 light:border-paper-300 hover:bg-paper-800/40 light:hover:bg-paper-100 flex items-center gap-2 font-serif font-bold text-xs sm:text-sm disabled:opacity-30 disabled:pointer-events-none transition-colors uppercase tracking-wider"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Previous
@@ -279,15 +275,15 @@ const TechInterviewPractice = () => {
               {currentIdx === questions.length - 1 ? (
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-2 font-extrabold text-xs sm:text-sm transition-all shadow-lg shadow-emerald-600/15 active:scale-95 uppercase tracking-wide"
+                  className="px-6 py-2.5 border border-emerald-600 bg-emerald-700 hover:bg-emerald-600 text-white flex items-center gap-2 font-serif font-bold text-xs sm:text-sm transition-colors uppercase tracking-wider"
                 >
-                  Submit Interview
+                  Submit Examination
                   <Send className="h-4 w-4" />
                 </button>
               ) : (
                 <button
                   onClick={handleNext}
-                  className="px-6 py-2.5 rounded-xl bg-accent text-white hover:bg-blue-600 flex items-center gap-2 font-extrabold text-xs sm:text-sm transition-all shadow-lg shadow-accent/20 active:scale-95 uppercase tracking-wide"
+                  className="px-6 py-2.5 border border-accent bg-accent hover:bg-accent/90 text-white flex items-center gap-2 font-serif font-bold text-xs sm:text-sm transition-colors uppercase tracking-wider"
                 >
                   Next Question
                   <ArrowRight className="h-4 w-4" />
@@ -301,88 +297,84 @@ const TechInterviewPractice = () => {
         {step === 'results' && evaluation && (
           <motion.div 
             key="results-step"
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-8 animate-slide-in text-left"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-8"
           >
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               
               {/* Score circle */}
-              <motion.div 
-                whileHover={{ y: -4 }}
-                className="p-6 rounded-3xl border border-navy-800/80 bg-navy-900/60 light:bg-white light:border-navy-200 shadow-xl flex flex-col items-center justify-center text-center gap-4 hover:shadow-glow-primary transition-all duration-300"
-              >
-                <div className="h-10 w-10 rounded-xl bg-accent/15 border border-accent/25 flex items-center justify-center text-accent">
+              <div className="p-6 border border-paper-800 bg-paper-900/80 light:bg-white light:border-paper-200 flex flex-col items-center justify-center text-center gap-4">
+                <div className="h-10 w-10 border border-accent bg-accent/10 flex items-center justify-center text-accent">
                   <Star className="h-5 w-5" />
                 </div>
-                <h3 className="font-extrabold text-base sm:text-lg">Assessment Result</h3>
-                <div className="h-32 w-32 my-2 relative font-black">
+                <div>
+                  <span className="font-mono text-[10px] text-accent uppercase tracking-widest block">[VERDICT]</span>
+                  <h3 className="font-serif font-bold text-base text-paper-50 light:text-paper-900">Overall Grade</h3>
+                </div>
+                <div className="h-32 w-32 my-2 font-serif font-bold">
                   <CircularProgressbar
                     value={evaluation.score}
                     text={`${evaluation.score}%`}
                   />
                 </div>
-                <p className="text-[10px] sm:text-xs text-navy-400 light:text-navy-500 max-w-[220px] leading-relaxed">
-                  Calculated based on technical accuracy, concept clarity, and complete explanations.
+                <p className="font-serif text-xs text-paper-400 light:text-paper-600 max-w-[200px] leading-relaxed">
+                  Evaluated based on conceptual accuracy and depth of response.
                 </p>
-              </motion.div>
+              </div>
 
               {/* Strengths & Weaknesses */}
-              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6 items-stretch">
+              <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 
                 {/* Strengths */}
-                <motion.div 
-                  whileHover={{ y: -4 }}
-                  className="p-6 rounded-3xl border border-emerald-500/20 bg-emerald-500/5 shadow-sm hover:shadow-[0_0_25px_rgba(16,185,129,0.1)] transition-all duration-300 flex flex-col"
-                >
-                  <h4 className="font-extrabold text-emerald-400 light:text-emerald-700 flex items-center gap-2 mb-4 text-sm sm:text-base">
-                    <CheckCircle2 className="h-5 w-5 shrink-0" />
-                    Overall Strengths
+                <div className="p-6 border border-emerald-900/60 bg-emerald-950/20 light:bg-emerald-50/50 light:border-emerald-200 flex flex-col text-left">
+                  <h4 className="font-serif font-bold text-emerald-400 light:text-emerald-800 flex items-center gap-2 mb-4 text-sm sm:text-base">
+                    <CheckCircle2 className="h-4.5 w-4.5 shrink-0" />
+                    Key Strengths
                   </h4>
                   {evaluation.pros && evaluation.pros.length > 0 ? (
-                    <ul className="space-y-2 flex-1">
+                    <ul className="space-y-2 flex-1 font-serif">
                       {evaluation.pros.map((pro, index) => (
-                        <li key={index} className="text-xs sm:text-sm leading-relaxed flex items-start gap-2 text-navy-200 light:text-navy-800">
-                          <span className="text-emerald-500 mt-0.5 text-base">•</span>
+                        <li key={index} className="text-xs sm:text-sm leading-relaxed flex items-start gap-2 text-paper-200 light:text-paper-800">
+                          <span className="text-emerald-500 font-bold">•</span>
                           <span>{pro}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs sm:text-sm text-navy-500 flex-1 font-medium">No major highlights identified.</p>
+                    <p className="font-serif text-xs text-paper-500 flex-1">No notable strengths recorded.</p>
                   )}
-                </motion.div>
+                </div>
 
-                {/* Weaknesses */}
-                <motion.div 
-                  whileHover={{ y: -4 }}
-                  className="p-6 rounded-3xl border border-red-500/20 bg-red-500/5 shadow-sm hover:shadow-[0_0_25px_rgba(239,68,68,0.1)] transition-all duration-300 flex flex-col"
-                >
-                  <h4 className="font-extrabold text-red-400 light:text-red-700 flex items-center gap-2 mb-4 text-sm sm:text-base">
-                    <AlertTriangle className="h-5 w-5 shrink-0" />
-                    Areas to Improve
+                {/* Areas for Improvement */}
+                <div className="p-6 border border-red-900/60 bg-red-950/20 light:bg-red-50/50 light:border-red-200 flex flex-col text-left">
+                  <h4 className="font-serif font-bold text-red-400 light:text-red-800 flex items-center gap-2 mb-4 text-sm sm:text-base">
+                    <AlertTriangle className="h-4.5 w-4.5 shrink-0" />
+                    Areas to Refine
                   </h4>
                   {evaluation.cons && evaluation.cons.length > 0 ? (
-                    <ul className="space-y-2 flex-1">
+                    <ul className="space-y-2 flex-1 font-serif">
                       {evaluation.cons.map((con, index) => (
-                        <li key={index} className="text-xs sm:text-sm leading-relaxed flex items-start gap-2 text-navy-200 light:text-navy-800">
-                          <span className="text-red-500 mt-0.5 text-base">•</span>
+                        <li key={index} className="text-xs sm:text-sm leading-relaxed flex items-start gap-2 text-paper-200 light:text-paper-800">
+                          <span className="text-red-500 font-bold">•</span>
                           <span>{con}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs sm:text-sm text-navy-500 flex-1 font-medium">Excellent job! No massive gaps highlighted.</p>
+                    <p className="font-serif text-xs text-paper-500 flex-1">No major improvement points listed.</p>
                   )}
-                </motion.div>
+                </div>
 
               </div>
             </div>
 
-            {/* Detailed Question Review */}
+            {/* Detailed Review Accordion */}
             <div className="space-y-4">
-              <h3 className="text-base sm:text-lg font-extrabold">Detailed Question Review</h3>
+              <h3 className="text-base sm:text-lg font-serif font-bold text-paper-50 light:text-paper-900">
+                Detailed Question Breakdown
+              </h3>
               <div className="space-y-3">
                 {evaluation.feedback && evaluation.feedback.map((item, index) => {
                   const isOpen = activeAccordion === index;
@@ -391,7 +383,6 @@ const TechInterviewPractice = () => {
 
                   let VerdictIcon = XCircle;
                   let verdictColor = 'text-red-500';
-                  let bgBorder = 'border-navy-800/80';
                   let verdictText = 'Needs Review';
 
                   if (isCorrect) {
@@ -407,50 +398,46 @@ const TechInterviewPractice = () => {
                   return (
                     <div 
                       key={index}
-                      className={`rounded-2xl border bg-navy-900/60 light:bg-white transition-all duration-300 overflow-hidden ${isOpen ? 'border-accent/40 shadow-sm' : bgBorder}`}
+                      className="border border-paper-800 bg-paper-900/60 light:bg-white light:border-paper-200"
                     >
-                      {/* Header bar */}
                       <button
                         onClick={() => toggleAccordion(index)}
-                        className="w-full p-5 flex items-center justify-between text-left gap-4 hover:bg-navy-850/30 light:hover:bg-navy-50 transition-colors"
+                        className="w-full p-4 flex items-center justify-between text-left gap-4 hover:bg-paper-850/40 light:hover:bg-paper-100 transition-colors"
                       >
                         <div className="flex items-start gap-3">
-                          <VerdictIcon className={`h-5 w-5 shrink-0 ${verdictColor} mt-0.5`} />
+                          <VerdictIcon className={`h-4.5 w-4.5 shrink-0 ${verdictColor} mt-0.5`} />
                           <div className="space-y-1">
-                            <span className="font-extrabold text-xs sm:text-sm leading-snug text-text-dark light:text-text-light">
+                            <p className="font-serif font-bold text-xs sm:text-sm text-paper-50 light:text-paper-900">
                               {item.question}
+                            </p>
+                            <span className={`font-mono text-[9px] uppercase tracking-widest ${verdictColor} block`}>
+                              [{verdictText}]
                             </span>
-                            <div className="flex items-center gap-2">
-                              <span className={`text-[9px] font-extrabold uppercase tracking-wide ${verdictColor}`}>
-                                {verdictText}
-                              </span>
-                            </div>
                           </div>
                         </div>
                         {isOpen ? (
-                          <ChevronUp className="h-5 w-5 text-navy-500 shrink-0" />
+                          <ChevronUp className="h-4 w-4 text-paper-400 shrink-0" />
                         ) : (
-                          <ChevronDown className="h-5 w-5 text-navy-500 shrink-0" />
+                          <ChevronDown className="h-4 w-4 text-paper-400 shrink-0" />
                         )}
                       </button>
 
-                      {/* Body contents */}
                       {isOpen && (
-                        <div className="px-5 pb-5 pt-2 border-t border-navy-800/40 light:border-navy-100 space-y-4 text-xs sm:text-sm leading-relaxed bg-navy-950/20 light:bg-navy-50/20">
+                        <div className="p-4 border-t border-paper-800 light:border-paper-200 space-y-4 bg-paper-950/40 light:bg-paper-50">
                           <div>
-                            <p className="text-[10px] font-extrabold uppercase tracking-widest text-navy-500 mb-1.5">
-                              Your Answer
-                            </p>
-                            <p className="p-3.5 rounded-xl bg-navy-950/80 light:bg-navy-100/40 font-medium text-navy-200 light:text-navy-800 border border-navy-800/40 light:border-navy-200/50">
+                            <span className="font-mono text-[9px] uppercase tracking-widest text-paper-500 block mb-1">
+                              Submitted Answer
+                            </span>
+                            <p className="p-3 border border-paper-800 bg-paper-900 font-serif text-xs text-paper-200 light:bg-paper-100 light:text-paper-800 light:border-paper-200">
                               {item.userAnswer || '[No Answer Provided]'}
                             </p>
                           </div>
                           <div>
-                            <p className="text-[10px] font-extrabold uppercase tracking-widest text-accent mb-1.5 flex items-center gap-1.5">
-                              <Code className="h-3.5 w-3.5" />
-                              Senior Interviewer's Suggestions
-                            </p>
-                            <p className="p-3.5 rounded-xl bg-navy-950/80 light:bg-navy-100/40 font-medium text-navy-200 light:text-navy-800 border border-navy-800/40 light:border-navy-200/50">
+                            <span className="font-mono text-[9px] uppercase tracking-widest text-accent block mb-1 flex items-center gap-1">
+                              <Code className="h-3 w-3" />
+                              Reviewer Suggestions
+                            </span>
+                            <p className="p-3 border border-paper-800 bg-paper-900 font-serif text-xs text-paper-200 light:bg-paper-100 light:text-paper-800 light:border-paper-200">
                               {item.suggestion}
                             </p>
                           </div>
@@ -463,15 +450,14 @@ const TechInterviewPractice = () => {
             </div>
 
             {/* Action Row */}
-            <div className="flex justify-end gap-4">
-              <motion.button
-                whileTap={{ scale: 0.97 }}
+            <div className="flex justify-end pt-2">
+              <button
                 onClick={resetPractice}
-                className="px-6 py-3 rounded-xl bg-accent text-white hover:bg-blue-600 font-extrabold flex items-center justify-center gap-2 transition-all shadow-lg shadow-accent/20 text-xs sm:text-sm"
+                className="px-6 py-3 border border-accent bg-accent text-white font-serif font-bold flex items-center gap-2 text-xs sm:text-sm uppercase tracking-wider hover:bg-accent/90 transition-colors"
               >
                 <RefreshCw className="h-4 w-4" />
-                Practice Another Topic
-              </motion.button>
+                Practice Another Subject
+              </button>
             </div>
 
           </motion.div>

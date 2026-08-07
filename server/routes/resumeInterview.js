@@ -1,7 +1,7 @@
 /**
  * File: server/routes/resumeInterview.js
  * Description: API endpoints for generating questions based on parsed PDF resumes and
- *              evaluating candidates' answers using Gemini.
+ *              evaluating candidates' answers using Cerebras AI.
  */
 
 const express = require('express');
@@ -11,7 +11,7 @@ const pdfParse = require('pdf-parse');
 const upload = require('../middleware/upload');
 const { checkJwt, syncUser } = require('../middleware/auth');
 const { aiLimiter } = require('../middleware/rateLimiter');
-const { callGemini } = require('../utils/gemini');
+const { callCerebras, extractArrayFromResponse } = require('../utils/cerebras');
 const AnalysisResult = require('../models/AnalysisResult');
 
 // POST /api/resume-interview/generate - Upload PDF and generate 12 custom questions
@@ -32,20 +32,17 @@ router.post('/generate', checkJwt, syncUser, aiLimiter, upload.single('resume'),
       throw new Error('Could not extract text from the PDF file. It might be scanned or empty.');
     }
 
-    // Call Gemini 1.5 Flash
+    // Call Cerebras GPT-OSS-120B
     const prompt = `You are a technical interviewer. Read this resume carefully and generate 12 personalized interview questions based on the candidate's projects, skills, and experience mentioned.
 Resume:
 ${resumeText}
 
-Return JSON array of question strings only. No numbering.`;
+Return a JSON object with a key "questions" containing an array of 12 question strings: {"questions": ["q1", "q2", ...]}. No numbering or extra text.`;
 
-    let questions = await callGemini(prompt, true);
+    const responseData = await callCerebras(prompt, true);
+    const questions = extractArrayFromResponse(responseData);
 
-    if (questions && !Array.isArray(questions) && Array.isArray(questions.questions)) {
-      questions = questions.questions;
-    }
-
-    if (!Array.isArray(questions)) {
+    if (!questions || questions.length === 0) {
       throw new Error('AI did not return a list of questions.');
     }
 
@@ -95,7 +92,7 @@ Return JSON with:
 - weaknesses: array of strings
 Return only valid JSON.`;
 
-    const evaluation = await callGemini(prompt, true);
+    const evaluation = await callCerebras(prompt, true);
 
     const score = evaluation && evaluation.totalScore !== undefined ? evaluation.totalScore : (evaluation?.score || 0);
     const pros = evaluation ? (evaluation.strengths || evaluation.pros || []) : [];

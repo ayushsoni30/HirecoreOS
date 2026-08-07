@@ -1,23 +1,24 @@
 /**
  * File: client/src/pages/Dashboard.jsx
- * Description: Landing page dashboard showing user profile overview, quick links to features,
- *              and recent resume/interview scores.
+ * Description: Main academic dashboard displaying candidate profile status, user details,
+ *              career tool links, account deletion controls, and recent examination results.
+ *              Redesigned with Libertinus Serif, sharp 0px corners, and scholarly paper styling.
  */
 
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useApi } from '../hooks/useApi';
+import { useAuth } from '../components/AuthContext';
+import { useTheme } from '../components/ThemeContext';
 import { useToast } from '../components/ToastContext';
-import { FileText, Code2, UserCheck, MessageSquare, ArrowUpRight, Award, Loader2, Sparkles } from 'lucide-react';
+import { FileText, Code2, UserCheck, MessageSquare, ArrowUpRight, Award, Loader2, BookOpen, Trash2, ShieldAlert, User as UserIcon } from 'lucide-react';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 const Dashboard = () => {
-  const user = {
-    name: 'Developer',
-    picture: 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'
-  };
+  const { user, deleteAccount } = useAuth();
+  const { theme } = useTheme();
   const api = useApi();
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -28,6 +29,8 @@ const Dashboard = () => {
     resumeInterview: null
   });
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const getGreeting = () => {
     const hr = new Date().getHours();
@@ -54,126 +57,163 @@ const Dashboard = () => {
     fetchSummary();
   }, [api, showToast]);
 
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await deleteAccount();
+      showToast('Your candidate account and data have been permanently deleted.', 'success');
+      navigate('/');
+    } catch (err) {
+      console.error('Error deleting account:', err);
+      showToast(err.message || 'Failed to delete account.', 'error');
+    } finally {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   const features = [
     {
+      idx: '[TOOL_01]',
       name: 'Smart Resume Analyzer',
-      desc: 'Match your resume against any Job Description to discover strengths, weaknesses, and score.',
+      desc: 'Evaluate CV relevance against target Job Descriptions to analyze match percentage and feedback.',
       icon: FileText,
-      path: '/resume-analyzer',
-      iconColor: 'text-blue-400 light:text-blue-600',
-      iconBg: 'bg-blue-500/10 border border-blue-500/20',
-      shadowGlow: 'hover:shadow-[0_0_25px_rgba(59,130,246,0.15)] hover:border-blue-500/30'
+      path: '/resume-analyzer'
     },
     {
+      idx: '[TOOL_02]',
       name: 'Tech Interview Practice',
-      desc: 'Answer topic-specific questions and get detailed, senior-interviewer suggestions.',
+      desc: 'Conduct topic-focused technical examinations with structured senior-level evaluations.',
       icon: Code2,
-      path: '/tech-interview',
-      iconColor: 'text-violet-400 light:text-violet-600',
-      iconBg: 'bg-violet-500/10 border border-violet-500/20',
-      shadowGlow: 'hover:shadow-[0_0_25px_rgba(139,92,246,0.15)] hover:border-violet-500/30'
+      path: '/tech-interview'
     },
     {
+      idx: '[TOOL_03]',
       name: 'Resume-Based Interview',
-      desc: 'Simulate an interview with questions derived directly from your resume achievements.',
+      desc: 'Engage in contextual mock interviews tailored specifically to your resume achievements.',
       icon: UserCheck,
-      path: '/resume-interview',
-      iconColor: 'text-cyan-400 light:text-cyan-600',
-      iconBg: 'bg-cyan-500/10 border border-cyan-500/20',
-      shadowGlow: 'hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] hover:border-cyan-500/30'
+      path: '/resume-interview'
     },
     {
+      idx: '[TOOL_04]',
       name: 'Tech Buddy',
-      desc: 'Chat with an AI mentor for roadmaps, debugging tips, and tech career planning.',
+      desc: 'Consult your 24/7 AI technical mentor for architecture patterns, roadmaps, and guidance.',
       icon: MessageSquare,
-      path: '/tech-buddy',
-      iconColor: 'text-emerald-400 light:text-emerald-600',
-      iconBg: 'bg-emerald-500/10 border border-emerald-500/20',
-      shadowGlow: 'hover:shadow-[0_0_25px_rgba(16,185,129,0.15)] hover:border-emerald-500/30'
+      path: '/tech-buddy'
     }
   ];
 
-  // Container motion animation
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.08 }
     }
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.3 } }
   };
+
+  // Safe metric extractors
+  const cvScore = stats.resumeAnalysis?.score ?? stats.resumeAnalysis?.matchPercentage;
+  const techScore = stats.techInterview?.score ?? stats.techInterview?.overallScore;
+  const resumeIntScore = stats.resumeInterview?.score ?? stats.resumeInterview?.overallScore;
 
   return (
     <motion.div 
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="p-6 max-w-7xl mx-auto space-y-8"
+      className="p-6 md:p-10 max-w-7xl mx-auto space-y-8 font-serif text-left"
     >
-      {/* Welcome banner */}
+      {/* Editorial Candidate Hero Banner */}
       <motion.div 
         variants={itemVariants}
-        className="relative overflow-hidden rounded-3xl border border-navy-800/80 light:border-navy-100 bg-gradient-to-tr from-[#131930] via-navy-950 to-[#1b2342] light:from-white light:via-navy-50 light:to-white shadow-xl p-8 transition-all duration-500 group"
+        className="border border-paper-800 light:border-paper-200 bg-paper-900 light:bg-paper-100 p-6 md:p-8 space-y-6"
       >
-        {/* Glow decoration */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent/10 rounded-full blur-[100px] -mr-24 -mt-24 group-hover:bg-accent/15 transition-all duration-500 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-secondary/5 rounded-full blur-[100px] -ml-24 -mb-24 pointer-events-none" />
-        
-        <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            
+            {/* Candidate Sharp Square Profile Container */}
             <div className="relative shrink-0">
-              {/* Animated pulse halo for profile picture */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-accent via-secondary to-cyanAccent rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-              <img
-                src={user?.picture || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
-                alt="Profile"
-                className="relative h-20 w-20 rounded-full object-cover border-2 border-navy-950 bg-navy-900"
-              />
-              <span className="absolute bottom-0.5 right-0.5 h-4.5 w-4.5 rounded-full bg-success border-3 border-navy-950" title="Online" />
+              <div className="w-20 h-20 border-2 border-paper-700 light:border-paper-300 bg-paper-950 light:bg-paper-50 p-1 overflow-hidden">
+                {user?.profilePic ? (
+                  <img
+                    src={user.profilePic}
+                    alt={user.name || 'Candidate'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-paper-900 light:bg-paper-100 text-accent">
+                    <UserIcon className="h-8 w-8" />
+                  </div>
+                )}
+              </div>
+              <span className="absolute -bottom-1 -right-1 font-mono text-[9px] px-1 bg-success text-white">
+                [ACTIVE]
+              </span>
             </div>
             
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2.5 justify-center sm:justify-start">
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-white to-navy-300 light:from-navy-900 light:to-navy-700 bg-clip-text text-transparent">
-                  {getGreeting()}, {user?.name || 'Developer'}!
+              <div className="flex flex-wrap items-center gap-3">
+                <h2 className="text-2xl sm:text-3xl font-serif font-normal tracking-tight text-paper-50 light:text-paper-900">
+                  {getGreeting()}, {user?.name || 'Developer Candidate'}
                 </h2>
-                <span className="px-3 py-0.5 text-[10px] font-extrabold tracking-wide uppercase rounded-full bg-accent/10 text-accent border border-accent/25 light:bg-accent/5">
-                  Pro Candidate
+                <span className="px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest bg-accent/10 border border-accent/30 text-accent font-bold">
+                  Candidate Docket
+                </span>
+                <span className="px-2 py-0.5 font-mono text-[9px] text-paper-400 light:text-paper-700 border border-paper-800 light:border-paper-300 bg-paper-950 light:bg-paper-200 uppercase tracking-widest">
+                  {user?.course || 'B.Tech'}
                 </span>
               </div>
-              <p className="text-xs sm:text-sm text-navy-400 light:text-navy-500 max-w-xl font-normal leading-relaxed">
-                Your AI preparation companion is ready. Analyze resumes, practice technical questions, and refine your skills to land your dream IT role.
+              
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-paper-400 light:text-paper-600">
+                <span>[EMAIL: {user?.email || 'N/A'}]</span>
+                <span>•</span>
+                <span>[TIER: {user?.tier?.toUpperCase() || 'FREE'}]</span>
+              </div>
+
+              <p className="text-sm text-paper-400 light:text-paper-600 max-w-2xl font-normal leading-relaxed">
+                Welcome to HireCore OS. Select an academic career tool below to analyze resumes, practice technical subjects, or consult your AI mentor.
               </p>
             </div>
           </div>
           
-          {/* Quick stats on banner */}
-          <div className="flex items-center gap-4 border-t sm:border-t-0 sm:border-l border-navy-800/80 light:border-navy-100/80 pt-4 sm:pt-0 sm:pl-8 shrink-0 w-full md:w-auto justify-around md:justify-end">
-            <div className="text-center md:text-right">
-              <span className="block text-[10px] font-extrabold text-navy-500 light:text-navy-400 uppercase tracking-widest">Preparation Status</span>
-              <span className="block text-lg font-black mt-1 text-accent flex items-center justify-center md:justify-end gap-1.5">
-                <Sparkles className="h-4 w-4 animate-pulse" />
-                Active Prep
-              </span>
+          {/* Action & Context Area */}
+          <div className="border-t md:border-t-0 md:border-l border-paper-800 light:border-paper-200 pt-4 md:pt-0 md:pl-8 shrink-0 w-full md:w-auto flex md:flex-col justify-between md:justify-start gap-4">
+            <div className="font-mono text-[11px] space-y-1">
+              <span className="text-paper-500 uppercase tracking-widest block">System Context</span>
+              <span className="text-paper-300 light:text-paper-700 block font-bold">MODE: PREPARATION</span>
+              <span className="text-accent block">[STUDY_SUITE_READY]</span>
             </div>
+
+            {/* Account Deletion Button */}
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-3 py-1.5 border border-red-900/60 light:border-red-300 hover:border-red-600 bg-red-950/20 light:bg-red-50 hover:bg-red-950/50 text-red-400 light:text-red-700 font-mono text-[10px] uppercase tracking-wider flex items-center gap-2 transition-colors self-end md:self-start"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Delete Account
+            </button>
           </div>
         </div>
       </motion.div>
 
-      {/* Grid containing Quick Links & Recent activity */}
+      {/* Main Grid: Tools & Activity */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         
-        {/* Quick Links / Feature Cards */}
+        {/* Career Tools Grid */}
         <div className="xl:col-span-2 space-y-6">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-accent" />
-            <h3 className="text-lg font-extrabold tracking-tight text-left">Explore Career Tools</h3>
+          <div className="flex items-center justify-between border-b border-paper-800 light:border-paper-200 pb-3">
+            <h3 className="text-lg font-serif font-normal tracking-tight text-paper-50 light:text-paper-900 flex items-center gap-2">
+              <BookOpen className="h-4.5 w-4.5 text-accent" />
+              Examination Modules
+            </h3>
+            <span className="font-mono text-[10px] text-paper-500 uppercase tracking-widest">
+              [AVAILABLE_TOOLS: 04]
+            </span>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -182,29 +222,34 @@ const Dashboard = () => {
               return (
                 <motion.div
                   variants={itemVariants}
-                  whileHover={{ y: -6, scale: 1.015 }}
-                  whileTap={{ scale: 0.985 }}
+                  whileHover={{ y: -3 }}
                   key={feat.name}
                   onClick={() => navigate(feat.path)}
-                  className={`group relative flex flex-col justify-between p-6 rounded-2xl border border-navy-800/80 bg-navy-900/60 light:bg-white light:border-navy-100 shadow-sm transition-all duration-300 cursor-pointer overflow-hidden text-left ${feat.shadowGlow}`}
+                  className="group flex flex-col justify-between p-6 border border-paper-800 light:border-paper-200 bg-paper-900/60 light:bg-white hover:border-accent light:hover:border-accent transition-all duration-200 cursor-pointer space-y-6"
                 >
                   <div className="space-y-4">
-                    <div className={`h-12 w-12 rounded-xl ${feat.iconBg} flex items-center justify-center ${feat.iconColor} transition-transform duration-300 group-hover:scale-110`}>
-                      <Icon className="h-5 w-5" />
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] text-accent tracking-widest uppercase">
+                        {feat.idx}
+                      </span>
+                      <div className="p-2 border border-paper-800 light:border-paper-200 group-hover:border-accent/40 transition-colors">
+                        <Icon className="h-5 w-5 text-paper-300 light:text-paper-700 group-hover:text-accent transition-colors" />
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-base text-text-dark light:text-text-light group-hover:text-accent transition-colors">
+                    
+                    <div className="space-y-1">
+                      <h4 className="text-base font-serif font-bold text-paper-50 light:text-paper-900 group-hover:text-accent transition-colors">
                         {feat.name}
                       </h4>
-                      <p className="text-xs sm:text-sm text-navy-400 light:text-navy-500 mt-2 leading-relaxed font-normal">
+                      <p className="text-xs text-paper-400 light:text-paper-600 font-normal leading-relaxed">
                         {feat.desc}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-accent text-xs sm:text-sm font-extrabold mt-6 group-hover:gap-2.5 transition-all">
-                    Start Session
-                    <ArrowUpRight className="h-4 w-4" />
+                  <div className="flex items-center justify-between pt-4 border-t border-paper-800/60 light:border-paper-200/60 font-mono text-[11px] text-paper-400 light:text-paper-600 group-hover:text-paper-50 light:group-hover:text-paper-900">
+                    <span>LAUNCH_MODULE</span>
+                    <ArrowUpRight className="h-4 w-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </div>
                 </motion.div>
               );
@@ -212,99 +257,164 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Activity panel */}
+        {/* Recent Performance Analytics Panel */}
         <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-secondary" />
-            <h3 className="text-lg font-extrabold tracking-tight text-left">Recent Activity</h3>
+          <div className="flex items-center justify-between border-b border-paper-800 light:border-paper-200 pb-3">
+            <h3 className="text-lg font-serif font-normal tracking-tight text-paper-50 light:text-paper-900 flex items-center gap-2">
+              <Award className="h-4.5 w-4.5 text-accent" />
+              Academic Performance
+            </h3>
+            <span className="font-mono text-[10px] text-paper-500 uppercase tracking-widest">
+              [LOGS]
+            </span>
           </div>
-          
-          <motion.div 
-            variants={itemVariants}
-            className="p-6 rounded-2xl border border-navy-800/80 bg-navy-900/60 light:bg-white light:border-navy-100 shadow-sm space-y-6"
-          >
+
+          <div className="border border-paper-800 light:border-paper-200 bg-paper-900/60 light:bg-white p-6 space-y-6">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-16 gap-2">
-                <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                <p className="text-xs text-navy-400">Loading performance data...</p>
-              </div>
-            ) : !stats.resumeAnalysis && !stats.techInterview && !stats.resumeInterview ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center text-navy-400">
-                <Award className="h-10 w-10 text-navy-700 mb-3" />
-                <p className="font-bold text-sm">No activity recorded yet</p>
-                <p className="text-xs text-navy-500 mt-1 max-w-[200px] leading-relaxed">
-                  Complete a resume analysis or interview practice to see scores.
-                </p>
+              <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                <Loader2 className="h-6 w-6 text-accent animate-spin" />
+                <span className="font-mono text-xs text-paper-400 light:text-paper-600">Loading performance dockets...</span>
               </div>
             ) : (
-              <div className="space-y-5 text-left">
-                {/* Last Resume Score */}
-                {stats.resumeAnalysis && (
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-navy-950/40 light:bg-navy-50/50 border border-navy-800/60 light:border-navy-100/80 hover:bg-navy-850/40 transition-colors">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-navy-500 light:text-navy-400 font-extrabold tracking-widest uppercase">
-                        Last Resume Match
+              <>
+                {/* Resume Score gauge */}
+                <div className="border border-paper-800 light:border-paper-200 p-4 space-y-3 bg-paper-950/40 light:bg-paper-100/60">
+                  <span className="font-mono text-[10px] text-paper-400 light:text-paper-600 uppercase tracking-widest block">
+                    [LATEST_CV_SCORE]
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xl font-bold text-paper-50 light:text-paper-900">
+                        {cvScore !== undefined && cvScore !== null ? `${cvScore}%` : 'N/A'}
                       </p>
-                      <p className="text-xs sm:text-sm font-bold text-text-dark light:text-text-light">Job Match Score</p>
-                      <p className="text-[10px] text-navy-500 font-medium">
-                        {new Date(stats.resumeAnalysis.createdAt).toLocaleDateString()}
-                      </p>
+                      <p className="text-xs text-paper-400 light:text-paper-600 font-normal">CV / Job Description Alignment</p>
                     </div>
-                    <div className="h-12 w-12 font-bold shrink-0">
+                    <div className="w-12 h-12">
                       <CircularProgressbar
-                        value={stats.resumeAnalysis.score}
-                        text={`${stats.resumeAnalysis.score}%`}
+                        value={cvScore ?? 0}
+                        text={cvScore !== undefined && cvScore !== null ? `${cvScore}%` : '0%'}
+                        styles={{
+                          path: { stroke: '#9A3412', strokeLinecap: 'square' },
+                          trail: { stroke: theme === 'dark' ? '#25221F' : '#E5E0D8' },
+                          text: { fill: theme === 'dark' ? '#ECE8E1' : '#1C1917', fontSize: '24px', fontFamily: 'Libertinus Serif' }
+                        }}
                       />
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* Last Tech Practice Score */}
-                {stats.techInterview && (
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-navy-950/40 light:bg-navy-50/50 border border-navy-800/60 light:border-navy-100/80 hover:bg-navy-850/40 transition-colors">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-navy-500 light:text-navy-400 font-extrabold tracking-widest uppercase">
-                        Tech Practice Interview
+                {/* Tech Practice Score */}
+                <div className="border border-paper-800 light:border-paper-200 p-4 space-y-3 bg-paper-950/40 light:bg-paper-100/60">
+                  <span className="font-mono text-[10px] text-paper-400 light:text-paper-600 uppercase tracking-widest block">
+                    [TECH_PRACTICE_RESULT]
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xl font-bold text-paper-50 light:text-paper-900">
+                        {techScore !== undefined && techScore !== null ? `${techScore}/100` : 'N/A'}
                       </p>
-                      <p className="text-xs sm:text-sm font-bold text-text-dark light:text-text-light line-clamp-1">{stats.techInterview.technology}</p>
-                      <p className="text-[10px] text-navy-500 font-medium">
-                        {new Date(stats.techInterview.createdAt).toLocaleDateString()}
+                      <p className="text-xs text-paper-400 light:text-paper-600 font-normal">
+                        {stats.techInterview?.technology ? `Domain: ${stats.techInterview.technology}` : 'Technical Domain Mastery'}
                       </p>
                     </div>
-                    <div className="h-12 w-12 font-bold shrink-0">
+                    <div className="w-12 h-12">
                       <CircularProgressbar
-                        value={stats.techInterview.score}
-                        text={`${stats.techInterview.score}%`}
+                        value={techScore ?? 0}
+                        text={techScore !== undefined && techScore !== null ? `${techScore}` : '0'}
+                        styles={{
+                          path: { stroke: '#854F2B', strokeLinecap: 'square' },
+                          trail: { stroke: theme === 'dark' ? '#25221F' : '#E5E0D8' },
+                          text: { fill: theme === 'dark' ? '#ECE8E1' : '#1C1917', fontSize: '24px', fontFamily: 'Libertinus Serif' }
+                        }}
                       />
                     </div>
                   </div>
-                )}
+                </div>
 
-                {/* Last Resume Interview Score */}
-                {stats.resumeInterview && (
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-navy-950/40 light:bg-navy-50/50 border border-navy-800/60 light:border-navy-100/80 hover:bg-navy-850/40 transition-colors">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-navy-500 light:text-navy-400 font-extrabold tracking-widest uppercase">
-                        Resume Interview
+                {/* Resume Interview Score */}
+                <div className="border border-paper-800 light:border-paper-200 p-4 space-y-3 bg-paper-950/40 light:bg-paper-100/60">
+                  <span className="font-mono text-[10px] text-paper-400 light:text-paper-600 uppercase tracking-widest block">
+                    [RESUME_MOCK_INTERVIEW]
+                  </span>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xl font-bold text-paper-50 light:text-paper-900">
+                        {resumeIntScore !== undefined && resumeIntScore !== null ? `${resumeIntScore}/100` : 'N/A'}
                       </p>
-                      <p className="text-xs sm:text-sm font-bold text-text-dark light:text-text-light">Personalized Score</p>
-                      <p className="text-[10px] text-navy-500 font-medium">
-                        {new Date(stats.resumeInterview.createdAt).toLocaleDateString()}
-                      </p>
+                      <p className="text-xs text-paper-400 light:text-paper-600 font-normal">Contextual Resume Inquiry</p>
                     </div>
-                    <div className="h-12 w-12 font-bold shrink-0">
+                    <div className="w-12 h-12">
                       <CircularProgressbar
-                        value={stats.resumeInterview.score}
-                        text={`${stats.resumeInterview.score}%`}
+                        value={resumeIntScore ?? 0}
+                        text={resumeIntScore !== undefined && resumeIntScore !== null ? `${resumeIntScore}` : '0'}
+                        styles={{
+                          path: { stroke: '#D97706', strokeLinecap: 'square' },
+                          trail: { stroke: theme === 'dark' ? '#25221F' : '#E5E0D8' },
+                          text: { fill: theme === 'dark' ? '#ECE8E1' : '#1C1917', fontSize: '24px', fontFamily: 'Libertinus Serif' }
+                        }}
                       />
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              </>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-paper-950/90 light:bg-paper-900/60 backdrop-blur-sm select-none font-serif">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md border border-red-900/80 light:border-red-300 bg-paper-900 light:bg-white p-6 space-y-6 text-left relative shadow-academic"
+          >
+            <div className="flex items-center gap-3 border-b border-paper-800 light:border-paper-200 pb-3">
+              <div className="h-8 w-8 border border-red-600 bg-red-950/40 light:bg-red-50 flex items-center justify-center text-red-500">
+                <ShieldAlert className="h-5 w-5" />
+              </div>
+              <div>
+                <span className="font-mono text-[9px] uppercase tracking-widest text-red-500 block">
+                  [DANGER_ZONE]
+                </span>
+                <h3 className="text-lg font-serif font-bold text-paper-50 light:text-paper-900">
+                  Delete Account Permanently
+                </h3>
+              </div>
+            </div>
+
+            <div className="space-y-3 text-sm text-paper-300 light:text-paper-700">
+              <p>
+                Are you sure you want to permanently delete your candidate profile (<strong className="text-paper-50 light:text-paper-900">{user?.email}</strong>)?
+              </p>
+              <p className="text-xs text-paper-400 light:text-paper-600 leading-relaxed border-l-2 border-red-800 light:border-red-400 pl-3">
+                This action is irreversible. All of your saved resume evaluations, technical practice records, and AI chat histories will be permanently wiped from HireCore OS.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-paper-800 light:border-paper-200">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 border border-paper-700 light:border-paper-300 bg-paper-950 light:bg-paper-100 text-paper-300 light:text-paper-700 hover:text-paper-50 light:hover:text-paper-900 font-mono text-xs uppercase tracking-wider transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleDeleteAccount}
+                className="px-4 py-2 border border-red-600 bg-red-950 light:bg-red-600 hover:bg-red-900 light:hover:bg-red-700 text-red-200 light:text-white font-mono text-xs uppercase tracking-wider flex items-center gap-2 transition-colors disabled:opacity-50"
+              >
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Confirm Deletion
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -1,161 +1,150 @@
 /**
  * File: client/src/index.css
- * Description: Global stylesheet for SuccessBuddy AI. Imports Tailwind CSS directives,
- *              customizes the default scrollbars, and defines circular progress styling.
+ * Description: Global stylesheet for HireCore OS.
+ *              Enforces strict zero border-radius sharp geometry, Libertinus Serif typography,
+ *              academic scrollbars, highlight.js syntax themes, browser autofill neutralization,
+ *              and editorial paper/charcoal styling.
  */
+
+@import "highlight.js/styles/github-dark.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* Strict 0px Radius Guarantee across ALL UI elements */
+  *, ::before, ::after {
+    border-radius: 0px !important;
+  }
+
   html {
     scroll-behavior: smooth;
+    font-family: 'Libertinus Serif', 'EB Garamond', Georgia, serif;
   }
   
   body {
-    @apply antialiased font-sans bg-navy-950 text-white selection:bg-accent/30 selection:text-white;
+    @apply antialiased font-serif bg-paper-950 text-paper-50 selection:bg-accent/20 selection:text-accent;
+    font-family: 'Libertinus Serif', 'EB Garamond', Georgia, serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+  h1, h2, h3, h4, h5, h6, button, input, textarea, select {
+    font-family: 'Libertinus Serif', 'EB Garamond', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace !important;
   }
 }
 
-/* Custom scrollbars for a premium SaaS feel */
+/* Browser Autofill Neutralization - Overrides default light-blue Chrome/Safari autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ECE8E1 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #141312 inset !important;
+  transition: background-color 50000s ease-in-out 0s !important;
+}
+
+.light input:-webkit-autofill,
+.light input:-webkit-autofill:hover,
+.light input:-webkit-autofill:focus,
+.light input:-webkit-autofill:active {
+  -webkit-text-fill-color: #1C1917 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #FBF9F5 inset !important;
+}
+
+/* Scholarly Sharp Webkit Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-navy-950/80;
+  background: #141312;
+  border-left: 1px solid #25221F;
 }
 
 .light ::-webkit-scrollbar-track {
-  @apply bg-navy-50;
+  background: #FBF9F5;
+  border-left: 1px solid #E5E0D8;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-navy-800 rounded-full border-2 border-transparent bg-clip-padding transition-colors duration-300;
+  background: #332F2B;
+  border-radius: 0px !important;
+  border: 1px solid #141312;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #D5CEC3;
+  border-radius: 0px !important;
+  border: 1px solid #FBF9F5;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-accent/60;
+  background: #9A3412;
 }
 
-/* React Circular Progress Bar Styling custom overrides */
+/* Circular Progress Bar Academic Overrides */
 .CircularProgressbar {
-  filter: drop-shadow(0 4px 10px rgba(59, 130, 246, 0.15));
+  filter: none !important;
 }
 
 .CircularProgressbar .CircularProgressbar-path {
-  stroke: #3B82F6 !important; /* Premium Blue Accent */
-  stroke-linecap: round;
-  transition: stroke-dashoffset 1s ease-in-out;
+  stroke: #9A3412 !important; /* Terracotta Accent */
+  stroke-linecap: square !important;
+  transition: stroke-dashoffset 0.8s ease-in-out;
 }
 
 .CircularProgressbar .CircularProgressbar-trail {
-  stroke: rgba(255, 255, 255, 0.05) !important; /* Dark Navy border */
+  stroke: #332F2B !important;
 }
 
 .light .CircularProgressbar .CircularProgressbar-trail {
-  stroke: rgba(0, 0, 0, 0.05) !important; /* Light border */
+  stroke: #E5E0D8 !important;
 }
 
 .CircularProgressbar .CircularProgressbar-text {
-  fill: #F8FAFC !important;
-  font-family: 'Outfit', sans-serif;
-  font-size: 20px !important;
+  fill: #ECE8E1 !important;
+  font-family: 'Libertinus Serif', serif !important;
+  font-size: 22px !important;
   font-weight: 700;
 }
 
 .light .CircularProgressbar .CircularProgressbar-text {
-  fill: #0A0F29 !important;
+  fill: #1C1917 !important;
 }
 
-/* Glassmorphism Styles */
-.glass-panel {
-  backdrop-filter: blur(12px);
-  background: rgba(15, 19, 34, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+/* Editorial Minimal Panels */
+.glass-panel, .glass-card {
+  backdrop-filter: none;
+  background: #1D1B19;
+  border: 1px solid #332F2B;
 }
 
-.light .glass-panel {
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+.light .glass-panel, .light .glass-card {
+  backdrop-filter: none;
+  background: #FFFFFF;
+  border: 1px solid #E5E0D8;
 }
 
-.glass-card {
-  backdrop-filter: blur(16px);
-  background: rgba(15, 19, 34, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-}
-
-.light .glass-card {
-  backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-}
-
-/* Glow decoration styles */
-.bg-glow-spot {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 9999px;
-  filter: blur(120px);
-  opacity: 0.12;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Custom animation keyframes for Toast notifications */
+/* Toast Slide-In Animation */
 @keyframes slideIn {
   from {
-    transform: translateY(1.5rem) scale(0.95);
+    transform: translateY(1rem);
     opacity: 0;
   }
   to {
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
 .animate-slide-in {
-  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Splash Loader Animations */
-@keyframes splash-pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 1;
-    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.4));
-  }
-}
-
-.animate-splash-pulse {
-  animation: splash-pulse 2s infinite ease-in-out;
-}
-
-@keyframes progress-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-progress-shimmer {
-  animation: progress-shimmer 1.5s infinite linear;
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Code Highlighting Custom Scroll */
@@ -163,13 +152,12 @@ pre::-webkit-scrollbar {
   height: 4px;
 }
 pre::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: #141312;
 }
 pre::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+  background: #332F2B;
+  border-radius: 0px !important;
 }
 pre::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: #9A3412;
 }
-

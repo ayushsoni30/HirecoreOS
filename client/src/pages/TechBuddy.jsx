@@ -1,15 +1,17 @@
 /**
  * File: client/src/pages/TechBuddy.jsx
- * Description: ChatGPT-like conversational UI for Tech Buddy.
- *              Integrates message history, markdown response parsing, and a clear session button.
+ * Description: Chatbot interface for Tech Buddy.
+ *              Integrates message history, remark-gfm and rehype-highlight markdown parsing, and session reset.
+ *              Redesigned with Libertinus Serif, sharp 0px corners, and academic paper layout.
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useApi } from '../hooks/useApi';
 import { useToast } from '../components/ToastContext';
-import { Send, Plus, Loader2, Sparkles, MessageSquare, Terminal, HelpCircle } from 'lucide-react';
+import { Send, Plus, Loader2, Sparkles, MessageSquare, Terminal } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
 
 const TechBuddy = () => {
   const api = useApi();
@@ -105,54 +107,45 @@ const TechBuddy = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex flex-col max-w-5xl mx-auto p-4 sm:p-6 text-left relative overflow-hidden">
+    <div className="h-[calc(100vh-4rem)] flex flex-col max-w-5xl mx-auto p-4 sm:p-6 font-serif text-left relative overflow-hidden">
       
-      {/* Background decoration glows */}
-      <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-[100px] pointer-events-none" />
-
       {/* Buddy Header */}
-      <div className="flex justify-between items-center border-b border-navy-800/80 light:border-navy-100 pb-4 shrink-0 relative z-10">
+      <div className="flex justify-between items-center border-b border-paper-800 light:border-paper-200 pb-3 shrink-0">
         <div>
-          <h2 className="text-lg sm:text-xl font-extrabold flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-accent animate-pulse" />
-            Tech Buddy
+          <span className="font-mono text-[10px] uppercase tracking-widest text-accent block">
+            [MODULE_05 // CONSULTATION_AGENT]
+          </span>
+          <h2 className="text-lg sm:text-xl font-serif font-normal tracking-tight text-paper-50 light:text-paper-900 flex items-center gap-2">
+            <Sparkles className="h-4.5 w-4.5 text-accent" />
+            Tech Buddy AI
           </h2>
-          <p className="text-[10px] sm:text-xs text-navy-400 light:text-navy-500 mt-1 font-medium">
-            IT Guide. Ask anything about programming, code design, frameworks, or career roadmaps.
-          </p>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
+        <button
           onClick={handleNewChat}
           disabled={loading || messages.length === 0}
-          className="px-4 py-2 rounded-xl border border-navy-800/80 light:border-navy-200 hover:bg-navy-850/60 light:hover:bg-navy-50 flex items-center gap-1.5 text-xs font-bold transition-all disabled:opacity-30 disabled:pointer-events-none"
+          className="px-3.5 py-1.5 border border-paper-800 light:border-paper-300 hover:bg-paper-800/40 light:hover:bg-paper-100 flex items-center gap-1.5 font-serif font-bold text-xs uppercase tracking-wider disabled:opacity-30 disabled:pointer-events-none transition-colors"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3.5 w-3.5" />
           New Session
-        </motion.button>
+        </button>
       </div>
 
       {/* Chat Messages Logs */}
-      <div className="flex-1 overflow-y-auto py-6 space-y-4 px-2 min-h-0 relative z-10 scrollbar-thin">
+      <div className="flex-1 overflow-y-auto py-6 space-y-4 min-h-0">
         {fetchingHistory ? (
           <div className="flex flex-col items-center justify-center py-20 gap-2">
-            <Loader2 className="h-8 w-8 animate-spin text-accent" />
-            <p className="text-[10px] text-navy-500 font-semibold tracking-wider uppercase">Retrieving past chat context...</p>
+            <Loader2 className="h-6 w-6 animate-spin text-accent" />
+            <p className="font-mono text-xs text-paper-400">Loading archived dialogue...</p>
           </div>
         ) : messages.length === 0 ? (
           /* Empty Chat Interface with Suggestion Pills */
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center py-10 md:py-16 max-w-lg mx-auto text-center"
-          >
-            <div className="h-12 w-12 rounded-2xl bg-navy-900/80 light:bg-navy-50 border border-navy-800/60 light:border-navy-100 flex items-center justify-center text-navy-500 light:text-navy-400 mb-5 shadow-sm">
+          <div className="flex flex-col items-center justify-center py-10 md:py-16 max-w-lg mx-auto text-center">
+            <div className="h-12 w-12 border border-paper-800 bg-paper-950 flex items-center justify-center text-accent mb-4">
               <MessageSquare className="h-5 w-5" />
             </div>
-            <p className="font-extrabold text-sm sm:text-base text-text-dark light:text-text-light">Start a Conversation</p>
-            <p className="text-xs text-navy-400 mt-1 max-w-[280px] leading-relaxed">
-              Ask Tech Buddy career roadmap strategies, system design concepts, or code debug questions.
+            <p className="font-serif font-bold text-base text-paper-50 light:text-paper-900">Initiate Dialogue</p>
+            <p className="font-serif text-xs text-paper-400 light:text-paper-600 mt-1 max-w-[320px] leading-relaxed">
+              Inquire regarding technical roadmaps, system architecture design, or algorithm concepts.
             </p>
 
             {/* Quick Suggestion Pills */}
@@ -161,83 +154,107 @@ const TechBuddy = () => {
                 <button
                   key={idx}
                   onClick={(e) => handleSend(e, s.query)}
-                  className="flex items-center gap-2 p-3 rounded-xl border border-navy-800/80 bg-navy-900/30 hover:bg-navy-850/40 hover:border-accent/40 light:bg-white light:border-navy-100 light:hover:bg-navy-50 text-left text-xs text-navy-300 light:text-navy-700 transition-all duration-300 hover:scale-[1.01]"
+                  className="flex items-center gap-2.5 p-3 border border-paper-800 bg-paper-900/60 hover:border-accent light:bg-white light:border-paper-200 text-left text-xs transition-colors group"
                 >
                   <Terminal className="h-3.5 w-3.5 text-accent shrink-0" />
-                  <span className="font-semibold line-clamp-2 leading-tight">{s.label}</span>
+                  <span className="font-serif font-bold text-paper-200 light:text-paper-800 line-clamp-2 leading-tight group-hover:text-accent">
+                    {s.label}
+                  </span>
                 </button>
               ))}
             </div>
-          </motion.div>
+          </div>
         ) : (
           <div className="space-y-4">
             {messages.map((msg, index) => {
               const isUser = msg.role === 'user';
               return (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+                <div
                   key={index}
                   className={`flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`
-                    max-w-[85%] rounded-2xl px-5 py-3.5 text-xs sm:text-sm shadow-sm text-left leading-relaxed relative overflow-hidden
+                    max-w-[85%] p-4 text-xs sm:text-sm font-serif leading-relaxed text-left border
                     ${isUser 
-                      ? 'bg-gradient-to-tr from-accent to-indigo-600 text-white rounded-tr-none font-medium' 
-                      : 'bg-navy-900/60 text-text-dark border border-navy-800/80 light:bg-white light:border-navy-100 light:text-text-light rounded-tl-none font-normal'
+                      ? 'bg-accent/10 border-accent/40 text-paper-50 light:text-paper-900' 
+                      : 'bg-paper-900/70 border-paper-800 text-paper-100 light:bg-white light:border-paper-200 light:text-paper-900'
                     }
                   `}>
+                    <span className="font-mono text-[9px] text-accent uppercase tracking-widest block mb-2">
+                      {isUser ? '[CANDIDATE]' : '[TECH_BUDDY_AI]'}
+                    </span>
                     {isUser ? (
                       <p className="whitespace-pre-wrap">{msg.content}</p>
                     ) : (
-                      <ReactMarkdown
-                        components={{
-                          h1: (props) => {
-                            const rest = { ...props };
-                            delete rest.node;
-                            return <h1 className="text-base font-extrabold my-3 pb-1 border-b border-navy-800/40 text-text-dark" {...rest} />;
-                          },
-                          h2: (props) => {
-                            const rest = { ...props };
-                            delete rest.node;
-                            return <h2 className="text-sm font-extrabold my-2.5 text-accent" {...rest} />;
-                          },
-                          code: (props) => {
-                            const { className, children, node, ...rest } = props;
-                            const match = /language-(\w+)/.exec(className || '');
-                            return !match 
-                              ? <code className="bg-navy-950/80 light:bg-navy-50 px-2 py-0.5 rounded text-[11px] font-mono font-bold text-accent" {...rest}>{children}</code> 
-                              : <div className="rounded-xl overflow-hidden my-3 border border-navy-800/80 text-text-dark bg-navy-950">
-                                  <div className="flex items-center justify-between px-4 py-1.5 bg-navy-900 border-b border-navy-800 text-[10px] text-navy-400 font-mono font-bold">
-                                    <span>CODE PLAYGROUND</span>
-                                    <span>{match[1].toUpperCase()}</span>
-                                  </div>
-                                  <pre className="p-4 overflow-x-auto text-[11px] font-mono leading-relaxed"><code className={`text-[11px] font-mono text-left block text-sky-400 ${className || ''}`} {...rest}>{children}</code></pre>
-                                </div>;
-                          },
-                          ul: (props) => {
-                            const rest = { ...props };
-                            delete rest.node;
-                            return <ul className="list-disc pl-5 my-2 space-y-1.5 text-navy-200 light:text-navy-800 font-medium" {...rest} />;
-                          },
-                          ol: (props) => {
-                            const rest = { ...props };
-                            delete rest.node;
-                            return <ol className="list-decimal pl-5 my-2 space-y-1.5 text-navy-200 light:text-navy-800 font-medium" {...rest} />;
-                          },
-                          p: (props) => {
-                            const rest = { ...props };
-                            delete rest.node;
-                            return <p className="mb-2.5 last:mb-0 text-navy-200 light:text-navy-800 font-medium leading-relaxed" {...rest} />;
-                          }
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
+                      <div className="prose prose-green dark:prose-invert max-w-none text-xs sm:text-sm font-serif">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeHighlight]}
+                          components={{
+                            h1: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <h1 className="text-base font-serif font-bold my-3 pb-1 border-b border-paper-800 text-paper-50 light:text-paper-900" {...rest} />;
+                            },
+                            h2: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <h2 className="text-sm font-serif font-bold my-2 text-accent" {...rest} />;
+                            },
+                            code: ({ className, children, ...rest }) => {
+                              const cleanProps = { ...rest };
+                              delete cleanProps.node;
+                              const match = /language-(\w+)/.exec(className || '');
+                              return !match 
+                                ? <code className="bg-paper-950 px-1.5 py-0.5 border border-paper-800 font-mono text-[11px] text-accent" {...cleanProps}>{children}</code> 
+                                : <div className="my-3 border border-paper-800 bg-paper-950">
+                                    <div className="flex items-center justify-between px-3 py-1 bg-paper-900 border-b border-paper-800 font-mono text-[9px] text-paper-400">
+                                      <span>[CODE_FRAMEWORK]</span>
+                                      <span>{match[1].toUpperCase()}</span>
+                                    </div>
+                                    <pre className="p-3 overflow-x-auto font-mono text-[11px] text-accent leading-relaxed">
+                                      <code className={className}>{children}</code>
+                                    </pre>
+                                  </div>;
+                            },
+                            ul: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <ul className="list-disc pl-5 my-2 space-y-1 font-serif text-paper-200 light:text-paper-800" {...rest} />;
+                            },
+                            ol: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <ol className="list-decimal pl-5 my-2 space-y-1 font-serif text-paper-200 light:text-paper-800" {...rest} />;
+                            },
+                            p: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <p className="mb-2 last:mb-0 font-serif leading-relaxed text-paper-200 light:text-paper-800" {...rest} />;
+                            },
+                            table: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <div className="overflow-x-auto my-3 border border-paper-800"><table className="w-full text-left font-serif border-collapse text-xs" {...rest} /></div>;
+                            },
+                            th: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <th className="border-b border-paper-800 bg-paper-950 p-2 font-mono text-[10px] uppercase text-accent font-bold" {...rest} />;
+                            },
+                            td: (props) => {
+                              const rest = { ...props };
+                              delete rest.node;
+                              return <td className="border-b border-paper-800/50 p-2 font-serif text-paper-200 light:text-paper-800" {...rest} />;
+                            }
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
                     )}
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -245,39 +262,34 @@ const TechBuddy = () => {
 
         {/* Bot Typing indicator */}
         {loading && (
-          <div className="flex w-full justify-start animate-pulse">
-            <div className="max-w-[85%] rounded-2xl rounded-tl-none px-5 py-3.5 bg-navy-900/60 border border-navy-800/80 light:bg-white light:border-navy-100 text-left flex items-center gap-2.5 shadow-sm">
-              <Loader2 className="h-4 w-4 animate-spin text-accent" />
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-navy-400">
-                Tech Buddy is thinking...
-              </span>
+          <div className="flex w-full justify-start">
+            <div className="max-w-[85%] p-3.5 border border-paper-800 bg-paper-900/60 flex items-center gap-2 font-mono text-[11px] text-paper-400">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-accent" />
+              <span>Formulating response...</span>
             </div>
           </div>
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Query Entry Box (Floating Pill Style) */}
-      <form onSubmit={handleSend} className="pt-4 shrink-0 relative z-10 select-none">
-        <div className="flex items-center gap-3 p-1.5 rounded-2xl border border-navy-800/80 bg-navy-900/60 backdrop-blur-md light:bg-white light:border-navy-200 focus-within:border-accent/65 focus-within:shadow-glow-primary transition-all duration-300">
+      {/* Query Entry Box */}
+      <form onSubmit={handleSend} className="pt-3 shrink-0">
+        <div className="flex items-center gap-2 p-1 border border-paper-800 bg-paper-900/80 light:bg-white light:border-paper-300">
           <input
             type="text"
-            className="flex-1 px-4 py-3 bg-transparent text-text-dark light:text-text-light text-xs sm:text-sm focus:outline-none placeholder-navy-500 font-medium"
-            placeholder={loading ? 'Please wait for response...' : 'Ask about code, frameworks, roadmaps...'}
+            className="flex-1 px-4 py-2.5 bg-transparent text-paper-50 light:text-paper-900 font-serif text-xs sm:text-sm focus:outline-none placeholder-paper-500"
+            placeholder={loading ? 'Formulating response...' : 'Type your query regarding code, architecture, or roadmaps...'}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={loading || fetchingHistory}
           />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <button
             type="submit"
             disabled={loading || !input.trim() || fetchingHistory}
-            className="h-10 w-10 rounded-xl bg-accent text-white flex items-center justify-center hover:bg-blue-600 transition-colors disabled:opacity-30 disabled:pointer-events-none shrink-0"
-            aria-label="Send message"
+            className="px-4 py-2.5 border border-accent bg-accent text-white font-serif font-bold text-xs uppercase tracking-wider hover:bg-accent/90 disabled:opacity-30 disabled:pointer-events-none transition-colors"
           >
-            <Send className="h-4 w-4" />
-          </motion.button>
+            <Send className="h-3.5 w-3.5" />
+          </button>
         </div>
       </form>
 

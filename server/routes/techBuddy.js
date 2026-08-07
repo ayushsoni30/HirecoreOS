@@ -6,16 +6,16 @@
 
 const express = require('express');
 const router = express.Router();
-const { checkJwt, syncUser } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { aiLimiter } = require('../middleware/rateLimiter');
-const { callGemini } = require('../utils/gemini');
-const ChatHistory = require('../models/ChatHistory');
+const { callCerebras } = require('../utils/cerebras');
+const Chat = require('../models/Chat');
 
 // System instruction to enforce tech-only responses and markdown formatting
 const SYSTEM_INSTRUCTION = `You are Tech Buddy, a highly knowledgeable technical assistant. You ONLY answer questions related to technology, programming, software development, DevOps, career roadmaps in IT, and related technical topics. If someone asks about anything non-technical, politely decline and say you only discuss tech topics. Always format your responses using Markdown: use headings, bullet points, code blocks where relevant. Be concise but thorough.`;
 
 // POST /api/tech-buddy/chat - Handle a user message and generate a chat response
-router.post('/chat', checkJwt, syncUser, aiLimiter, async (req, res) => {
+router.post('/chat', protect, aiLimiter, async (req, res) => {
   const { message } = req.body;
 
   if (!message || message.trim() === '') {
@@ -23,13 +23,13 @@ router.post('/chat', checkJwt, syncUser, aiLimiter, async (req, res) => {
   }
 
   try {
-    // Find the latest active chat session for the user
-    let chatSession = await ChatHistory.findOne({ userId: req.mongoUser._id }).sort({ updatedAt: -1 });
+    // Find the latest active chat session for the authenticated user
+    let chatSession = await Chat.findOne({ userId: req.user._id }).sort({ updatedAt: -1 });
 
     // If no session exists, create a new one
     if (!chatSession) {
-      chatSession = new ChatHistory({
-        userId: req.mongoUser._id,
+      chatSession = new Chat({
+        userId: req.user._id,
         messages: []
       });
     }
@@ -40,14 +40,14 @@ router.post('/chat', checkJwt, syncUser, aiLimiter, async (req, res) => {
       content: message
     });
 
-    // Format full conversation history for Gemini API
-    const geminiContents = chatSession.messages.map(msg => ({
-      role: msg.role,
-      parts: [{ text: msg.content }]
+    // Format full conversation history for Cerebras API
+    const chatMessages = chatSession.messages.map(msg => ({
+      role: msg.role === 'model' ? 'assistant' : msg.role,
+      content: msg.content
     }));
 
-    // Call Gemini (expect text/markdown output, not JSON)
-    const botResponse = await callGemini(geminiContents, false, SYSTEM_INSTRUCTION);
+    // Call Cerebras GPT-OSS-120B (expect text/markdown output, not JSON)
+    const botResponse = await callCerebras(chatMessages, false, SYSTEM_INSTRUCTION);
 
     // Append the bot's response
     chatSession.messages.push({
@@ -71,9 +71,9 @@ router.post('/chat', checkJwt, syncUser, aiLimiter, async (req, res) => {
 });
 
 // GET /api/tech-buddy/history - Get messages from the active chat session
-router.get('/history', checkJwt, syncUser, async (req, res) => {
+router.get('/history', protect, async (req, res) => {
   try {
-    const chatSession = await ChatHistory.findOne({ userId: req.mongoUser._id }).sort({ updatedAt: -1 });
+    const chatSession = await Chat.findOne({ userId: req.user._id }).sort({ updatedAt: -1 });
     res.json({
       success: true,
       history: chatSession ? chatSession.messages : []
@@ -85,12 +85,10 @@ router.get('/history', checkJwt, syncUser, async (req, res) => {
 });
 
 // POST /api/tech-buddy/clear - End current session and start a new empty one
-router.post('/clear', checkJwt, syncUser, async (req, res) => {
+router.post('/clear', protect, async (req, res) => {
   try {
-    // Creating a new document ensures that the next message creates a fresh history
-    // while the previous chat sessions are preserved in the DB.
-    const newSession = new ChatHistory({
-      userId: req.mongoUser._id,
+    const newSession = new Chat({
+      userId: req.user._id,
       messages: []
     });
     await newSession.save();
