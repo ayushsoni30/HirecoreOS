@@ -40,13 +40,13 @@ router.get('/summary', checkJwt, syncUser, async (req, res) => {
     res.json({
       success: true,
       resumeAnalysis: lastResumeAnalysis
-        ? { score: lastResumeAnalysis.score, createdAt: lastResumeAnalysis.createdAt }
+        ? { score: lastResumeAnalysis.score, matchPercentage: lastResumeAnalysis.score, createdAt: lastResumeAnalysis.createdAt }
         : null,
       techInterview: lastTechInterview
-        ? { score: lastTechInterview.score, technology: lastTechInterview.technology, createdAt: lastTechInterview.createdAt }
+        ? { score: lastTechInterview.score, overallScore: lastTechInterview.score, technology: lastTechInterview.technology, createdAt: lastTechInterview.createdAt }
         : null,
       resumeInterview: lastResumeInterview
-        ? { score: lastResumeInterview.score, createdAt: lastResumeInterview.createdAt }
+        ? { score: lastResumeInterview.score, overallScore: lastResumeInterview.score, createdAt: lastResumeInterview.createdAt }
         : null
     });
   } catch (error) {
