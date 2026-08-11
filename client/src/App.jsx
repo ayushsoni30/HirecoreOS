@@ -60,19 +60,19 @@ const MainContent = () => {
   const getPageTitle = () => {
     switch (location.pathname) {
       case '/landing':
-        return 'System Architecture Overview';
+        return 'System Overview';
       case '/about':
-        return 'About Team & Faculty';
+        return 'About Team';
       case '/dashboard':
-        return 'Dashboard Overview';
+        return 'Dashboard';
       case '/resume-analyzer':
-        return 'Smart Resume Analyzer';
+        return 'Resume Analyzer';
       case '/tech-interview':
-        return 'Tech Interview Practice';
+        return 'Tech Practice';
       case '/resume-interview':
-        return 'Resume-Based Interview';
+        return 'CV Oral Exam';
       case '/tech-buddy':
-        return 'Tech Buddy Assistant';
+        return 'Tech Buddy AI';
       case '/privacy':
         return 'Privacy Policy';
       case '/terms':

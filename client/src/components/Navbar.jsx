@@ -8,7 +8,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useTheme } from './ThemeContext';
 import { useAuth } from './AuthContext';
 import HcLogo from './HcLogo';
-import { Sun, Moon, Menu, LogIn, LayoutDashboard } from 'lucide-react';
+import { Sun, Moon, Menu, LogIn, LayoutDashboard, ArrowLeft } from 'lucide-react';
 
 const Navbar = ({ onMenuClick, title, isPublic = false }) => {
   const { theme, toggleTheme } = useTheme();
@@ -42,57 +42,35 @@ const Navbar = ({ onMenuClick, title, isPublic = false }) => {
             <Menu className="h-5 w-5" />
           </button>
         ) : (
-          <Link to="/landing" className="flex items-center gap-3 group">
-            <HcLogo className="h-7 w-7 text-accent group-hover:scale-105 transition-transform" />
-            <div className="text-left hidden sm:block">
+          <Link to="/landing" className="hidden sm:flex items-center gap-3 group shrink-0">
+            <HcLogo className="h-7 w-7 text-accent group-hover:scale-105 transition-transform shrink-0" />
+            <div className="text-left hidden sm:block whitespace-nowrap">
               <span className="text-sm font-serif font-bold tracking-tight text-paper-50 light:text-paper-900 block leading-tight">
                 HireCore OS
               </span>
-              <span className="text-[8px] font-mono uppercase tracking-widest text-paper-400 light:text-paper-500 block">
+              <span className="text-[8px] font-mono uppercase tracking-widest text-paper-400 light:text-paper-500 block leading-tight">
                 Scholarly Suite
               </span>
             </div>
           </Link>
         )}
 
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-block font-mono text-[10px] tracking-widest text-accent uppercase px-2 py-0.5 border border-accent/30 bg-accent/5">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Link
+            to={isPublic ? "/landing" : "/dashboard"}
+            className="sm:hidden p-1 border border-paper-800 light:border-paper-200 hover:bg-paper-800/40 text-accent transition-all shrink-0"
+            title="Back to Home"
+            aria-label="Back to Home"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <span className="hidden sm:inline-block font-mono text-[10px] tracking-widest text-accent uppercase px-2 py-0.5 border border-accent/30 bg-accent/5 shrink-0">
             {getSectionTag()}
           </span>
-          <h1 className="text-lg sm:text-xl font-serif font-normal tracking-tight text-paper-50 light:text-paper-900">
+          <h1 className="text-base sm:text-xl font-serif font-normal tracking-tight text-paper-50 light:text-paper-900 truncate">
             {title}
           </h1>
         </div>
-
-        {/* Public Links */}
-        {isPublic && (
-          <div className="hidden md:flex items-center gap-2 pl-4 border-l border-paper-800 light:border-paper-200 font-mono text-xs">
-            <NavLink
-              to="/landing"
-              className={({ isActive }) => 
-                `px-2.5 py-1 transition-colors border ${
-                  isActive 
-                    ? 'border-accent text-accent bg-accent/10' 
-                    : 'border-transparent text-paper-400 hover:text-paper-50 light:text-paper-600'
-                }`
-              }
-            >
-              [00] Overview
-            </NavLink>
-            <NavLink
-              to="/about"
-              className={({ isActive }) => 
-                `px-2.5 py-1 transition-colors border ${
-                  isActive 
-                    ? 'border-accent text-accent bg-accent/10' 
-                    : 'border-transparent text-paper-400 hover:text-paper-50 light:text-paper-600'
-                }`
-              }
-            >
-              [06] About Team
-            </NavLink>
-          </div>
-        )}
       </div>
 
       {/* Right Column: User Auth & Theme Controls */}
@@ -102,8 +80,19 @@ const Navbar = ({ onMenuClick, title, isPublic = false }) => {
           STATUS: ONLINE
         </div>
 
-        {/* Legal links — always visible */}
+        {/* Navigation links — always visible */}
         <div className="hidden lg:flex items-center gap-3 font-mono text-[10px] text-paper-500 light:text-paper-500 uppercase tracking-wider border-r border-paper-800 light:border-paper-200 pr-4">
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              `transition-colors ${
+                isActive ? 'text-accent' : 'hover:text-paper-300 light:hover:text-paper-700'
+              }`
+            }
+          >
+            About
+          </NavLink>
+          <span className="text-paper-700 light:text-paper-400">·</span>
           <NavLink
             to="/privacy"
             className={({ isActive }) =>
