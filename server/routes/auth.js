@@ -43,7 +43,7 @@ const sendTokenCookie = (res, userId) => {
   const options = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'false',
+    sameSite: 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   };
 
@@ -274,7 +274,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    sameSite: 'none'
   });
   res.json({ success: true, message: 'Logged out successfully.' });
 });
@@ -298,7 +298,7 @@ router.delete('/delete', protect, async (req, res) => {
     res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      sameSite: 'none'
     });
 
     res.json({ success: true, message: 'Candidate account and associated data permanently deleted.' });
