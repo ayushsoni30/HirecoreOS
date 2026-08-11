@@ -23,6 +23,8 @@ const Navbar = ({ onMenuClick, title, isPublic = false }) => {
     if (t.includes('resume-based')) return '[CV_INTERVIEW]';
     if (t.includes('buddy')) return '[AI_CONSULTATION]';
     if (t.includes('about')) return '[FACULTY_DOSSIER]';
+    if (t.includes('privacy')) return '[PRIVACY_POLICY]';
+    if (t.includes('terms')) return '[TERMS_OF_SERVICE]';
     return '[ACADEMIC_SUITE]';
   };
 
@@ -98,6 +100,31 @@ const Navbar = ({ onMenuClick, title, isPublic = false }) => {
         <div className="hidden lg:flex items-center gap-2 font-mono text-[10px] text-paper-400 light:text-paper-500 uppercase tracking-wider border-r border-paper-800 light:border-paper-200 pr-4">
           <span className="h-2 w-2 bg-success inline-block"></span>
           STATUS: ONLINE
+        </div>
+
+        {/* Legal links — always visible */}
+        <div className="hidden lg:flex items-center gap-3 font-mono text-[10px] text-paper-500 light:text-paper-500 uppercase tracking-wider border-r border-paper-800 light:border-paper-200 pr-4">
+          <NavLink
+            to="/privacy"
+            className={({ isActive }) =>
+              `transition-colors ${
+                isActive ? 'text-accent' : 'hover:text-paper-300 light:hover:text-paper-700'
+              }`
+            }
+          >
+            Privacy
+          </NavLink>
+          <span className="text-paper-700 light:text-paper-400">·</span>
+          <NavLink
+            to="/terms"
+            className={({ isActive }) =>
+              `transition-colors ${
+                isActive ? 'text-accent' : 'hover:text-paper-300 light:hover:text-paper-700'
+              }`
+            }
+          >
+            Terms
+          </NavLink>
         </div>
 
         {user ? (
