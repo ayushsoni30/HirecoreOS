@@ -69,6 +69,7 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 ```
 hirecore-os/
 ├── docker-compose.yml           # Root Docker Orchestration Config
+├── DESIGN.md                    # Visual Identity & UI/UX System Guide
 ├── LICENSE                      # MIT Open Source License
 ├── CONTRIBUTION.md              # Code Style & PR Guidelines
 ├── CONTRIBUTING.md              # Contribution Reference Pointer
@@ -90,10 +91,12 @@ hirecore-os/
 │   │   │   ├── AuthModal.jsx    # Candidate Gateway Modal
 │   │   │   ├── Dashboard.jsx    # Live Performance Command Center
 │   │   │   ├── LandingPage.jsx  # System Architecture Overview
+│   │   │   ├── PrivacyPolicy.jsx # Privacy Policy (public, /privacy)
 │   │   │   ├── ResumeAnalyzer.jsx # Resume Alignment Engine
 │   │   │   ├── ResumeBasedInterview.jsx # Contextual CV Exam Simulator
 │   │   │   ├── TechBuddy.jsx    # AI Research Assistant
-│   │   │   └── TechInterviewPractice.jsx # Subject Exam Simulator
+│   │   │   ├── TechInterviewPractice.jsx # Subject Exam Simulator
+│   │   │   └── TermsOfService.jsx # Terms of Service (public, /terms)
 │   │   ├── utils/
 │   │   │   └── api.js           # Pre-configured Axios Instance
 │   │   ├── App.jsx              # Routing & Layout Root
@@ -165,13 +168,63 @@ hirecore-os/
 
 ## 5. System Design & Aesthetic Standard
 
-HireCore OS follows a **Scholarly Academic Paper** design language:
-* **Border Radius**: 0px across all UI elements, inputs, modals, buttons, and cards.
-* **Typography**: Primary serif rendered in `Libertinus Serif` / `Georgia`, paired with monospaced metadata labels (`[SYSTEM_CAPABILITIES]`, `[01]`, `[AUTH_GATEWAY]`).
-* **Color Palette**:
-  * **Dark Mode**: High-contrast charcoal `#0d0c0a` background, paper text `#f5f4ef`, muted borders `#26241e`, burnt amber accent `#c85a17`.
-  * **Light Mode**: Crisp archival paper `#f5f4ef` background, deep charcoal text `#0d0c0a`, light borders `#e0ddd3`.
-* **Zero Informal Elements**: Responses and interface labels adhere strictly to institutional formatting without informal emojis or casual placeholders.
+HireCore OS follows a **Scholarly Academic Paper** design language — hard geometry, ink-on-paper contrast, editorial typography, and motion with restraint. Below is a structured summary; the full specification lives in **[DESIGN.md](./DESIGN.md)**.
+
+### 5.1 Design Philosophy
+* **Strict zero radius** — `border-radius: 0px !important` applied globally in CSS and all Tailwind tokens remapped to `0px`.
+* **Typographic hierarchy** — Serif body (`Libertinus Serif` / `EB Garamond` / Georgia) paired with monospaced metadata labels (`JetBrains Mono`).
+* **No informal elements** — No emojis, no casual placeholders, no rounded "bubble" UI.
+* **Border-over-shadow** — Elevation is communicated through bordered containment, not drop shadows (all shadow tokens resolve to `none`).
+* **Restrained motion** — Framer Motion animations only where they communicate state.
+
+### 5.2 Color Tokens
+
+| Token | Hex | Role |
+| :--- | :--- | :--- |
+| `paper-950` | `#141312` | Dark mode page background |
+| `paper-900` | `#1D1B19` | Dark mode card / panel background |
+| `paper-800` | `#25221F` | Dark mode primary border |
+| `paper-50` | `#FBF9F5` | Light mode background / dark-surface text |
+| `paper-200` | `#E5E0D8` | Light mode border |
+| `accent` | `#9A3412` | Terracotta — primary interactive accent (both modes) |
+| `secondary` | `#D97706` | Academic Gold / Warm Amber |
+| `success` | `#15803D` | Positive evaluation feedback |
+| `error` | `#B91C1C` | Destructive / failure states |
+
+Theme switching uses a `.light` class on `<html>`, managed by `ThemeContext.jsx`. The Tailwind plugin registers a `light:` variant for dual-mode utility classes.
+
+### 5.3 Typography Scale
+
+| Family | Stack | Usage |
+| :--- | :--- | :--- |
+| **Serif** | `Libertinus Serif`, `EB Garamond`, Georgia | Body copy, all headings, UI labels |
+| **Monospace** | `JetBrains Mono`, Courier New | System badges, code blocks, metadata |
+
+Monospace system tags follow the `[NAMESPACE // SECTION_LABEL]` convention — uppercase, `tracking-widest`, `text-accent`.
+
+### 5.4 Core Component Patterns
+
+* **System Tag Badge** — `inline-flex` pill with `bg-accent/10 border border-accent/30 text-accent font-mono text-xs uppercase tracking-widest`.
+* **Section Title** — `border-l-2 border-accent pl-4` left-rule with serif heading and optional mono sub-label.
+* **Card / Panel** — `border border-paper-800 bg-paper-900/50` — no shadow, no radius.
+* **Accent Callout Block** — `border border-accent/20 bg-accent/5` with `[LABEL]` mono header for explicit commitments or warnings.
+* **Metadata Grid** — Compact `grid` of key/value pairs in `font-mono text-xs` inside a bordered `bg-paper-950` panel.
+
+### 5.5 Motion
+
+* **Route transitions** — `opacity 0→1, y 8→0` / `opacity 1→0, y 0→-8` at `0.25s easeOut` via Framer Motion `AnimatePresence`.
+* **Splash screen** — Full-screen overlay with a `1.3s` progress bar, exits with a `[0.16, 1, 0.3, 1]` cubic-bezier spring.
+* **Toast notifications** — `animate-slide-in` CSS keyframe (`translateY(1rem) → 0`, `0.25s cubic-bezier(0.16, 1, 0.3, 1)`).
+
+### 5.6 Custom Cursor
+
+A canvas-rendered academic precision pointer in `CustomCursor.jsx` runs at `z-[100000]`. Active on `min-width: 768px`; native cursor is suppressed via `cursor: none !important` in `index.css`.
+
+### 5.7 Legal Routes
+
+`/privacy` ([PrivacyPolicy.jsx](./client/src/pages/PrivacyPolicy.jsx)) and `/terms` ([TermsOfService.jsx](./client/src/pages/TermsOfService.jsx)) are **public routes** (no authentication required) rendered in the same editorial design language as all other pages.
+
+> **Full reference**: See [DESIGN.md](./DESIGN.md) for complete color ramps, spacing guidelines, scrollbar spec, autofill neutralization, syntax highlighting configuration, and accessibility notes.
 
 ---
 

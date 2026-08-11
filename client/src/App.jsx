@@ -20,6 +20,8 @@ import HcLogo from './components/HcLogo';
 // Pages imports
 import LandingPage from './pages/LandingPage';
 import AboutPage from './pages/AboutPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import Dashboard from './pages/Dashboard';
 import SmartResumeAnalyzer from './pages/SmartResumeAnalyzer';
 import TechInterviewPractice from './pages/TechInterviewPractice';
@@ -50,7 +52,7 @@ const MainContent = () => {
   }, []);
 
   // Public non-authenticated paths
-  const PUBLIC_PATHS = ['/landing', '/about'];
+  const PUBLIC_PATHS = ['/landing', '/about', '/privacy', '/terms'];
   const isPublicPath = PUBLIC_PATHS.includes(location.pathname);
   const shouldShowAuthModal = isAuthModalOpen || (!loading && !user && !isPublicPath);
 
@@ -71,6 +73,10 @@ const MainContent = () => {
         return 'Resume-Based Interview';
       case '/tech-buddy':
         return 'Tech Buddy Assistant';
+      case '/privacy':
+        return 'Privacy Policy';
+      case '/terms':
+        return 'Terms of Service';
       default:
         return 'HireCore OS';
     }
@@ -190,6 +196,8 @@ const MainContent = () => {
                   <Route path="/" element={<Navigate to="/landing" replace />} />
                   <Route path="/landing" element={<LandingPage />} />
                   <Route path="/about" element={<AboutPage />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/resume-analyzer" element={<SmartResumeAnalyzer />} />
                   <Route path="/tech-interview" element={<TechInterviewPractice />} />
