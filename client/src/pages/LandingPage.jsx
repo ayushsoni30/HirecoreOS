@@ -40,18 +40,19 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-16 text-left font-serif text-paper-50 light:text-paper-900 select-none">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-12 md:pt-16 pb-16 space-y-20 text-left font-serif text-paper-50 light:text-paper-900 select-none">
       
-      {/* Hero Section - Strict Left Alignment */}
-      <section className="space-y-6 border-b border-paper-800 light:border-paper-200 pb-12">
+      {/* Hero Section - Strict Alignment & Scholarly Layout */}
+      <section className="space-y-8 border-b border-paper-800 light:border-paper-200 pb-14">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/10 border border-accent/30 text-accent font-mono text-xs uppercase tracking-widest">
           <Terminal className="h-3.5 w-3.5" />
           <span>[SYSTEM_MANIFEST // HIRECORE OS v1.0]</span>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-8">
-          <div className="space-y-4 max-w-3xl">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal tracking-tight leading-[1.1]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Main Title & Description Column */}
+          <div className="lg:col-span-8 space-y-5 flex flex-col justify-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-serif font-normal tracking-tight leading-[1.15] text-paper-50 light:text-paper-900">
               The Academic Engine for Technical Evaluation & Career Mastery.
             </h1>
             <p className="text-base sm:text-lg text-paper-300 light:text-paper-600 leading-relaxed font-serif max-w-2xl">
@@ -59,22 +60,37 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="p-5 border border-paper-800 light:border-paper-200 bg-paper-900/60 light:bg-paper-100/60 shrink-0 w-full md:w-64 space-y-3">
-            <div className="flex items-center gap-3">
-              <HcLogo className="h-10 w-10 text-accent" />
+          {/* Right Status Card Column */}
+          <div className="lg:col-span-4 p-5 border border-paper-800 light:border-paper-200 bg-paper-900/60 light:bg-paper-100/60 space-y-4 flex flex-col justify-between">
+            <div className="flex items-center gap-3 border-b border-paper-800 light:border-paper-200 pb-3">
+              <HcLogo className="h-9 w-9 text-accent shrink-0" />
               <div>
-                <span className="font-serif font-bold text-sm block">HireCore OS</span>
+                <span className="font-serif font-bold text-sm text-paper-50 light:text-paper-900 block leading-tight">HireCore OS</span>
                 <span className="font-mono text-[9px] text-paper-400 light:text-paper-500 uppercase tracking-widest block">v1.0 Scholarly Suite</span>
               </div>
             </div>
-            <p className="font-mono text-[10px] text-paper-400 light:text-paper-500 leading-tight border-t border-paper-800 light:border-paper-200 pt-2">
-              Status: Operational<br />
-              Inference: Cerebras Llama-3<br />
-              Auth: JWT + Google OAuth
-            </p>
+
+            <div className="space-y-2 font-mono text-xs border-y border-paper-800/80 light:border-paper-200 py-3 my-1">
+              <div className="flex justify-between items-center">
+                <span className="text-paper-500 text-[11px]">System Status</span>
+                <span className="text-success font-medium text-[11px] flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 bg-success inline-block"></span>
+                  Operational
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-paper-500 text-[11px]">AI Inference</span>
+                <span className="text-paper-200 light:text-paper-800 text-[11px]">Cerebras GPT-OSS-120B</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-paper-500 text-[11px]">Security</span>
+                <span className="text-paper-200 light:text-paper-800 text-[11px]">JWT + Google OAuth</span>
+              </div>
+            </div>
+
             <button
               onClick={handleGetStarted}
-              className="w-full py-2 px-3 border border-accent bg-accent text-white font-serif font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-accent/90 transition-colors block text-center"
+              className="w-full py-2.5 px-4 border border-accent bg-accent text-white font-serif font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-accent/90 transition-all text-center"
             >
               {user ? 'Enter Dashboard' : 'Get Started / Sign In'} <ArrowRight className="h-3.5 w-3.5" />
             </button>
@@ -82,7 +98,7 @@ const LandingPage = () => {
         </div>
 
         {/* Feature Index Pills */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 pt-4 font-mono text-[11px]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2 font-mono text-xs">
           {[
             { tag: '[01]', name: 'Resume Analyzer' },
             { tag: '[02]', name: 'Tech Interviews' },
@@ -91,9 +107,9 @@ const LandingPage = () => {
             { tag: '[05]', name: 'Live Analytics' },
             { tag: '[06]', name: 'Google OAuth' },
           ].map((item) => (
-            <div key={item.tag} className="p-2 border border-paper-800 light:border-paper-200 bg-paper-950 light:bg-paper-50 text-paper-300 light:text-paper-600 flex items-center gap-2">
-              <span className="text-accent font-bold">{item.tag}</span>
-              <span className="truncate">{item.name}</span>
+            <div key={item.tag} className="p-2.5 border border-paper-800 light:border-paper-200 bg-paper-950 light:bg-paper-50 text-paper-300 light:text-paper-600 flex items-center gap-2 transition-colors hover:border-paper-700">
+              <span className="text-accent font-bold shrink-0">{item.tag}</span>
+              <span className="truncate text-[11px]">{item.name}</span>
             </div>
           ))}
         </div>
@@ -212,7 +228,7 @@ const LandingPage = () => {
                 <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Persistent Session Chat Thread Archiving
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Ultra-Fast Inference via Cerebras Llama Engine
+                <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Ultra-Fast Inference via Cerebras GPT-OSS Engine
               </li>
             </ul>
           </div>

@@ -29,7 +29,7 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 * **Turn-by-Turn Assessment**: Accepts candidate answers, grades explanation accuracy, and archives overall contextual performance metrics.
 
 ### [04] Tech Buddy Research Assistant
-* **Ultra-Low Latency Inference**: Interactive technical companion powered by Cerebras Llama models.
+* **Ultra-Low Latency Inference**: Interactive technical companion powered by Cerebras GPT-OSS-120B.
 * **Multi-Domain Knowledge Base**: Provides assistance on algorithm optimization, system design trade-offs, code refactoring, and framework troubleshooting.
 * **Syntax-Highlighted Code Blocks**: Renders responses using `react-markdown`, `remark-gfm`, and `rehype-highlight` with monospaced code frame headers.
 * **Session Persistence**: Maintains thread history in MongoDB with single-click session resets.
@@ -102,6 +102,7 @@ hirecore-os/
 │   │   ├── App.jsx              # Routing & Layout Root
 │   │   ├── index.css            # Design System Tokens & Color Variables
 │   │   └── main.jsx             # Entry Point Initialization
+│   ├── vercel.json              # SPA Rewrites for Vercel Deployment
 │   └── package.json
 │
 └── server/                      # Express REST API Server
