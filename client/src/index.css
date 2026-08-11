@@ -18,12 +18,7 @@
     border-radius: 0px !important;
   }
 
-  /* Hide default system cursor on desktop in favor of CustomCursor component */
-  @media (min-width: 768px) {
-    *, ::before, ::after {
-      cursor: none !important;
-    }
-  }
+
 
   html {
     scroll-behavior: smooth;

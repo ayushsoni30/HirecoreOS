@@ -13,7 +13,7 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import AuthModal from './pages/AuthModal';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import CustomCursor from './components/CustomCursor';
+
 
 import HcLogo from './components/HcLogo';
 
@@ -78,7 +78,7 @@ const MainContent = () => {
 
   return (
     <>
-      <CustomCursor />
+
 
       {/* Auth Modal overlay if user is unauthenticated on protected routes or explicitly opened */}
       {shouldShowAuthModal && <AuthModal />}
