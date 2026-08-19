@@ -28,19 +28,66 @@ const app = express();
 // Connect to Database
 connectDB();
 
-// Security and utility Middlewares
-app.use(helmet());
-app.use(morgan('dev'));
-
-// Cookie parser middleware for reading HTTP-only JWT cookies
-app.use(cookieParser());
-
 // CORS configuration (Allows frontend access from default Vite port)
+// Registered first to process OPTIONS preflight requests before security/fallback headers
 const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
 app.use(cors({
   origin: allowedOrigin,
   credentials: true
 }));
+
+// Security and utility Middlewares
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://accounts.google.com"],
+      connectSrc: ["'self'", "http://localhost:5000", "https://api.cloudinary.com", "https://accounts.google.com", "https://api.cerebras.ai"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://lh3.googleusercontent.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.cdnfonts.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.cdnfonts.com"],
+      frameSrc: ["'self'", "https://accounts.google.com"],
+      frameAncestors: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: null
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
+  xFrameOptions: { action: "sameorigin" },
+  xContentTypeOptions: true,
+}));
+
+// Custom fallback middleware to guarantee headers are set under all conditions
+app.use((req, res, next) => {
+  // Skip modifying OPTIONS preflights (handled by CORS middleware)
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  
+  // Set HSTS only over HTTPS/secure connection to prevent local dev breakage
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
+
+app.use(morgan('dev'));
+
+// Cookie parser middleware for reading HTTP-only JWT cookies
+app.use(cookieParser());
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

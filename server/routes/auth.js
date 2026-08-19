@@ -40,10 +40,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'hirecore_os_secret_key_2026';
 const sendTokenCookie = (res, userId) => {
   const token = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '7d' });
 
+  const isProduction = process.env.NODE_ENV === 'production';
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   };
 
@@ -271,10 +272,11 @@ router.post('/login', async (req, res) => {
 
 // POST /api/auth/logout - Clear HTTP-only session cookie
 router.post('/logout', (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none'
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax'
   });
   res.json({ success: true, message: 'Logged out successfully.' });
 });
@@ -295,10 +297,11 @@ router.delete('/delete', protect, async (req, res) => {
     await User.findByIdAndDelete(userId);
 
     // Clear session cookie
+    const isProduction = process.env.NODE_ENV === 'production';
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none'
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax'
     });
 
     res.json({ success: true, message: 'Candidate account and associated data permanently deleted.' });
