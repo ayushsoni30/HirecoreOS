@@ -41,10 +41,18 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://accounts.google.com"],
-      connectSrc: ["'self'", "http://localhost:5000", "https://api.cloudinary.com", "https://accounts.google.com", "https://api.cerebras.ai"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://lh3.googleusercontent.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.cdnfonts.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://accounts.google.com", "https://static.cloudflareinsights.com"],
+      connectSrc: [
+        "'self'", 
+        "http://localhost:*", 
+        "https://api.cloudinary.com", 
+        "https://*.cloudinary.com", 
+        "https://accounts.google.com", 
+        "https://*.googleapis.com", 
+        "https://api.cerebras.ai"
+      ],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com", "https://lh3.googleusercontent.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.cdnfonts.com", "https://accounts.google.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.cdnfonts.com"],
       frameSrc: ["'self'", "https://accounts.google.com"],
       frameAncestors: ["'self'"],
@@ -53,6 +61,7 @@ app.use(helmet({
     },
   },
   crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Allow Google Sign-In popups to communicate back
   crossOriginResourcePolicy: { policy: "cross-origin" },
   hsts: {
     maxAge: 31536000,
