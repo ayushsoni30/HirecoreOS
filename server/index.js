@@ -45,13 +45,13 @@ app.use(helmet({
       connectSrc: [
         "'self'", 
         "http://localhost:*", 
-        "https://api.cloudinary.com", 
-        "https://*.cloudinary.com", 
-        "https://accounts.google.com", 
-        "https://*.googleapis.com", 
-        "https://api.cerebras.ai"
+        "https:"
       ],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com", "https://*.cloudinary.com", "https://lh3.googleusercontent.com"],
+      imgSrc: [
+        "'self'", 
+        "data:", 
+        "https:"
+      ],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://fonts.cdnfonts.com", "https://accounts.google.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.cdnfonts.com"],
       frameSrc: ["'self'", "https://accounts.google.com"],
