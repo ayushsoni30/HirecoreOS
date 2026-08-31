@@ -8,11 +8,9 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const { aiLimiter } = require('../middleware/rateLimiter');
-const { callCerebras } = require('../utils/cerebras');
+const { callGroq } = require('../utils/groq');
+const { systemPrompt } = require('../prompts/systemPrompt');
 const Chat = require('../models/Chat');
-
-// System instruction to enforce tech-only responses and markdown formatting
-const SYSTEM_INSTRUCTION = `You are Tech Buddy, a highly knowledgeable technical assistant. You ONLY answer questions related to technology, programming, software development, DevOps, career roadmaps in IT, and related technical topics. If someone asks about anything non-technical, politely decline and say you only discuss tech topics. Always format your responses using Markdown: use headings, bullet points, code blocks where relevant. Be concise but thorough.`;
 
 // POST /api/tech-buddy/chat - Handle a user message and generate a chat response
 router.post('/chat', protect, aiLimiter, async (req, res) => {
@@ -40,14 +38,14 @@ router.post('/chat', protect, aiLimiter, async (req, res) => {
       content: message
     });
 
-    // Format full conversation history for Cerebras API
+    // Format full conversation history for Groq API
     const chatMessages = chatSession.messages.map(msg => ({
       role: msg.role === 'model' ? 'assistant' : msg.role,
       content: msg.content
     }));
 
-    // Call Cerebras GPT-OSS-120B (expect text/markdown output, not JSON)
-    const botResponse = await callCerebras(chatMessages, false, SYSTEM_INSTRUCTION);
+    // Call Groq GPT-OSS-120B (expect text/markdown output, not JSON)
+    const botResponse = await callGroq(chatMessages, false, systemPrompt);
 
     // Append the bot's response
     chatSession.messages.push({

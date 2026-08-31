@@ -1,7 +1,7 @@
 /**
  * File: client/src/pages/SmartResumeAnalyzer.jsx
  * Description: Interface to upload a resume PDF and paste a job description.
- *              Submits inputs for Cerebras AI analysis and displays scores, pros, and cons.
+ *              Submits inputs for Groq AI analysis and displays scores, pros, and cons.
  *              Redesigned with Libertinus Serif, sharp 0px corners, and academic paper layout.
  */
 

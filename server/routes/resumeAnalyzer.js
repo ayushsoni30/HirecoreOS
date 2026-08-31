@@ -10,7 +10,7 @@ const pdfParse = require('pdf-parse');
 const upload = require('../middleware/upload');
 const { checkJwt, syncUser } = require('../middleware/auth');
 const { aiLimiter } = require('../middleware/rateLimiter');
-const { callCerebras } = require('../utils/cerebras');
+const { callGroq } = require('../utils/groq');
 const AnalysisResult = require('../models/AnalysisResult');
 
 // POST /api/resume-analyzer - Upload resume PDF and match against job description
@@ -40,7 +40,7 @@ router.post('/', checkJwt, syncUser, aiLimiter, upload.single('resume'), async (
       throw new Error('Could not extract text from the PDF file. It might be scanned or empty.');
     }
 
-    // Call Cerebras GPT-OSS-120B
+    // Call Groq GPT-OSS-120B
     const prompt = `You are a professional resume reviewer. Given the resume and job description below, return a JSON object with:
 - score: number (0-100)
 - pros: array of strings (max 5)
@@ -54,7 +54,7 @@ ${jobDescription}
 
 Return only valid JSON, no explanation.`;
 
-    const result = await callCerebras(prompt, true);
+    const result = await callGroq(prompt, true);
 
     const score = result && result.score !== undefined ? result.score : (result?.matchScore || result?.overallScore || 0);
     const pros = result ? (result.pros || result.strengths || []) : [];
