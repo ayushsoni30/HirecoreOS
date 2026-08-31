@@ -80,7 +80,7 @@ const LandingPage = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-paper-500 text-[11px]">AI Inference</span>
-                <span className="text-paper-200 light:text-paper-800 text-[11px]">Cerebras GPT-OSS-120B</span>
+                <span className="text-paper-200 light:text-paper-800 text-[11px]">Groq GPT-OSS-120B</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-paper-500 text-[11px]">Security</span>
@@ -137,7 +137,7 @@ const LandingPage = () => {
               </div>
             </div>
             <p className="text-xs text-paper-300 light:text-paper-600 leading-relaxed font-serif">
-              Performs structural PDF extraction using <code className="font-mono text-accent">pdf-parse</code> and processes candidate experience against target job descriptions using Cerebras AI models. Generates a precise 0-100 match percentage score alongside a critical missing skills matrix and actionable feedback.
+              Performs structural PDF extraction using <code className="font-mono text-accent">pdf-parse</code> and processes candidate experience against target job descriptions using Groq AI models. Generates a precise 0-100 match percentage score alongside a critical missing skills matrix and actionable feedback.
             </p>
             <ul className="space-y-1.5 font-mono text-[11px] text-paper-400 light:text-paper-500 pt-2">
               <li className="flex items-center gap-2">
@@ -218,7 +218,7 @@ const LandingPage = () => {
               </div>
             </div>
             <p className="text-xs text-paper-300 light:text-paper-600 leading-relaxed font-serif">
-              Interactive companion powered by Cerebras AI models with persistent MongoDB chat history. Provides instant code debugging, system architecture advice, algorithmic explanations, and career guidance.
+              Interactive companion powered by Groq AI models with persistent MongoDB chat history. Provides instant code debugging, system architecture advice, algorithmic explanations, and career guidance.
             </p>
             <ul className="space-y-1.5 font-mono text-[11px] text-paper-400 light:text-paper-500 pt-2">
               <li className="flex items-center gap-2">
@@ -228,7 +228,7 @@ const LandingPage = () => {
                 <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Persistent Session Chat Thread Archiving
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Ultra-Fast Inference via Cerebras GPT-OSS Engine
+                <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0" /> Ultra-Fast Inference via Groq GPT-OSS Engine
               </li>
             </ul>
           </div>

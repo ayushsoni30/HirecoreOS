@@ -11,7 +11,7 @@ const pdfParse = require('pdf-parse');
 const upload = require('../middleware/upload');
 const { checkJwt, syncUser } = require('../middleware/auth');
 const { aiLimiter } = require('../middleware/rateLimiter');
-const { callCerebras, extractArrayFromResponse } = require('../utils/cerebras');
+const { callGroq, extractArrayFromResponse } = require('../utils/groq');
 const AnalysisResult = require('../models/AnalysisResult');
 
 // POST /api/resume-interview/generate - Upload PDF and generate 12 custom questions
@@ -32,14 +32,14 @@ router.post('/generate', checkJwt, syncUser, aiLimiter, upload.single('resume'),
       throw new Error('Could not extract text from the PDF file. It might be scanned or empty.');
     }
 
-    // Call Cerebras GPT-OSS-120B
+    // Call Groq GPT-OSS-120B
     const prompt = `You are a technical interviewer. Read this resume carefully and generate 12 personalized interview questions based on the candidate's projects, skills, and experience mentioned.
 Resume:
 ${resumeText}
 
 Return a JSON object with a key "questions" containing an array of 12 question strings: {"questions": ["q1", "q2", ...]}. No numbering or extra text.`;
 
-    const responseData = await callCerebras(prompt, true);
+    const responseData = await callGroq(prompt, true);
     const questions = extractArrayFromResponse(responseData);
 
     if (!questions || questions.length === 0) {
@@ -92,7 +92,7 @@ Return JSON with:
 - weaknesses: array of strings
 Return only valid JSON.`;
 
-    const evaluation = await callCerebras(prompt, true);
+    const evaluation = await callGroq(prompt, true);
 
     const score = evaluation && evaluation.totalScore !== undefined ? evaluation.totalScore : (evaluation?.score || 0);
     const pros = evaluation ? (evaluation.strengths || evaluation.pros || []) : [];

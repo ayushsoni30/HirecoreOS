@@ -4,7 +4,7 @@ Institutional-Grade AI Platform for Technical Candidate Evaluation, Resume Analy
 
 HireCore OS is an open-standard, AI-powered evaluation operating system designed for software developers, candidates, and engineering teams. It bridges the gap between curriculum vitae parsing, domain-specific technical assessment, project-based oral examinations, and real-time performance analytics.
 
-Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore OS uses Cerebras AI inference models (`llama-3.3-70b` / `gpt-oss-120b`) to deliver low-latency, academically rigorous candidate scoring and structured technical feedback.
+Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore OS uses Groq AI inference models (`openai/gpt-oss-120b`) to deliver low-latency, academically rigorous candidate scoring and structured technical feedback.
 
 ---
 
@@ -12,7 +12,7 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 
 ### [01] Smart Resume Analyzer
 * **PDF Extraction Engine**: Processes raw candidate CVs using `pdf-parse` to extract clean textual content across multi-page documents.
-* **Job Description Alignment**: Performs cross-correlation between candidate technical experience and target job requirements using Cerebras AI models.
+* **Job Description Alignment**: Performs cross-correlation between candidate technical experience and target job requirements using Groq AI models.
 * **Quantitative Scoring Matrix**: Computes an objective 0-100 match percentage score.
 * **Gap & Strengths Analysis**: Generates structured arrays detailing matching candidate strengths, critical missing technical skills, and actionable optimization advice.
 * **Persistent History**: Automatically serializes analysis records to MongoDB for historical tracking.
@@ -29,7 +29,7 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 * **Turn-by-Turn Assessment**: Accepts candidate answers, grades explanation accuracy, and archives overall contextual performance metrics.
 
 ### [04] Tech Buddy Research Assistant
-* **Ultra-Low Latency Inference**: Interactive technical companion powered by Cerebras GPT-OSS-120B.
+* **Ultra-Low Latency Inference**: Interactive technical companion powered by Groq GPT-OSS-120B.
 * **Multi-Domain Knowledge Base**: Provides assistance on algorithm optimization, system design trade-offs, code refactoring, and framework troubleshooting.
 * **Syntax-Highlighted Code Blocks**: Renders responses using `react-markdown`, `remark-gfm`, and `rehype-highlight` with monospaced code frame headers.
 * **Session Persistence**: Maintains thread history in MongoDB with single-click session resets.
@@ -56,8 +56,7 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 | **UI Components** | Lucide React, React Circular Progressbar, React Markdown, Rehype Highlight |
 | **Backend Runtime** | Node.js v22 (LTS), Express.js |
 | **Database & ORM** | MongoDB, Mongoose v8 |
-| **AI Inference Engine** | Cerebras Cloud API (`llama-3.3-70b` / `gpt-oss-120b`) |
-| **Document Processing** | `pdf-parse` (Client-to-Server Multipart Upload) |
+| **AI Inference Engine** | Groq Cloud API (`openai/gpt-oss-120b`) || **Document Processing** | `pdf-parse` (Client-to-Server Multipart Upload) |
 | **Media Storage** | Cloudinary API, Multer Storage Engine |
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`), Google Auth Library (`google-auth-library`), `bcryptjs` |
 | **Containerization** | Docker (`node:22-alpine`), Docker Compose (`mongo:7-jammy`) |
@@ -128,7 +127,10 @@ hirecore-os/
     │   ├── resumeInterview.js   # Resume Contextual Exam Endpoints
     │   └── techBuddy.js         # AI Chat Assistant Endpoints
     ├── utils/
-    │   └── cerebras.js          # Cerebras LLM Client Wrapper
+    │   ├── groq.js              # Groq LLM SDK Wrapper
+    │   └── cerebras.js          # Groq Legacy Backward-Compatibility Proxy
+    ├── prompts/
+    │   └── systemPrompt.js      # Centralized System Prompt Definition
     ├── index.js                 # Express Application Bootstrap
     └── package.json
 ```
@@ -162,7 +164,7 @@ hirecore-os/
 * `POST /api/resume-interview/submit` — Grades candidate oral answers against contextual reference metrics.
 
 ### AI Assistant (`/api/tech-buddy`)
-* `POST /api/tech-buddy/message` — Ingests candidate message string, queries Cerebras AI inference model, updates persistent chat thread, and returns AI response.
+* `POST /api/tech-buddy/message` — Ingests candidate message string, queries Groq AI inference model, updates persistent chat thread, and returns AI response.
 * `POST /api/tech-buddy/reset` — Clears candidate's active chat thread history.
 
 ---
@@ -238,8 +240,8 @@ Create a `.env` file inside the `server/` directory:
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/hirecore_os
 JWT_SECRET=your_secure_jwt_secret_key_here
-CEREBRAS_API_KEY=your_cerebras_api_key_here
-CEREBRAS_MODEL=gpt-oss-120b
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=openai/gpt-oss-120b
 GOOGLE_CLIENT_ID=your_google_client_id_here
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
@@ -308,7 +310,7 @@ We welcome community contributions. Please read our [Contribution Guidelines](./
 * **Rishabh Sharma** — Backend Engineer & AI Systems Lead
   * GitHub: [/rishhbh](https://github.com/rishhbh)
   * Portfolio: [rishabhh.is-a.dev](https://rishabhh.is-a.dev)
-  * Specialization: MERN Architecture, REST API Design, AWS Infrastructure, Cerebras AI Pipeline Engineering.
+  * Specialization: MERN Architecture, REST API Design, AWS Infrastructure, Groq AI Pipeline Engineering.
 
 * **Ayush Soni** — Full Stack Developer & GenAI Specialist
   * GitHub: [/ayushsoni30](https://github.com/ayushsoni30)

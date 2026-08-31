@@ -175,7 +175,7 @@ const AboutPage = () => {
       <section className="p-6 border border-paper-800 light:border-paper-200 bg-paper-900/30 light:bg-paper-100/40 space-y-3">
         <h4 className="text-sm font-serif font-bold uppercase tracking-widest text-accent">HireCore OS Architecture Principles</h4>
         <p className="text-xs text-paper-300 light:text-paper-600 font-serif leading-relaxed">
-          100% Client-Side Rendering with React 19 • Zero-Radius 0px Academic Styling • Express & Mongoose Production API • High-throughput Cerebras AI Inference • Google OAuth & JWT HTTP-Only Auth Security.
+          100% Client-Side Rendering with React 19 • Zero-Radius 0px Academic Styling • Express & Mongoose Production API • High-throughput Groq AI Inference • Google OAuth & JWT HTTP-Only Auth Security.
         </p>
       </section>
 
