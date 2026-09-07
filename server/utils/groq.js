@@ -54,9 +54,9 @@ const callGroq = async (
   prompt,
   parseJson = true,
   systemInstruction = null,
-  modelName = process.env.GROQ_MODEL || 'openai/gpt-oss-120b'
+  modelName = process.env.GROQ_MODEL 
 ) => {
-  const apiKey = process.env.GROQ_API_KEY || process.env.CEREBRAS_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey || apiKey.startsWith('your_') || apiKey.trim() === '') {
     throw new Error('Groq API Key is missing or invalid. Please configure GROQ_API_KEY in your .env file.');
   }
@@ -97,8 +97,7 @@ const callGroq = async (
     temperature: parseJson ? 0.2 : 1,
     max_completion_tokens: 2048,
     top_p: 1,
-    stream: !parseJson,
-    reasoning_effort: 'medium',
+    stream: false,
     stop: null
   };
 
