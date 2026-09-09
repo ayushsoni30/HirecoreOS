@@ -2,48 +2,49 @@
 
 Institutional-Grade AI Platform for Technical Candidate Evaluation, Resume Analytics, and Interview Preparation.
 
-HireCore OS is an open-standard, AI-powered evaluation operating system designed for software developers, candidates, and engineering teams. It bridges the gap between curriculum vitae parsing, domain-specific technical assessment, project-based oral examinations, and real-time performance analytics.
+HireCore OS is an open-standard, AI-powered evaluation operating system designed for software developers, candidates, and engineering teams. It bridges the gap between curriculum vitae parsing, domain-specific technical assessment, project-based contextual interviews, and real-time performance analytics.
 
-Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore OS uses Groq AI inference models (`openai/gpt-oss-120b`) to deliver low-latency, academically rigorous candidate scoring and structured technical feedback.
+Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore OS uses Groq AI inference models (`llama-3.1-8b-instant` / configurable via `GROQ_MODEL`) to deliver low-latency, academically rigorous candidate scoring and structured technical feedback.
 
 ---
 
 ## 1. Core Architectural Capabilities
 
 ### [01] Smart Resume Analyzer
-* **PDF Extraction Engine**: Processes raw candidate CVs using `pdf-parse` to extract clean textual content across multi-page documents.
-* **Job Description Alignment**: Performs cross-correlation between candidate technical experience and target job requirements using Groq AI models.
-* **Quantitative Scoring Matrix**: Computes an objective 0-100 match percentage score.
-* **Gap & Strengths Analysis**: Generates structured arrays detailing matching candidate strengths, critical missing technical skills, and actionable optimization advice.
-* **Persistent History**: Automatically serializes analysis records to MongoDB for historical tracking.
+* **PDF Extraction Engine**: Processes candidate CVs using `pdf-parse` to extract clean textual content across multi-page documents via multipart uploads.
+* **Job Description Alignment**: Performs semantic cross-correlation between candidate technical experience and target job requirements using Groq AI.
+* **Quantitative Scoring Matrix**: Computes an objective 0–100 match percentage score.
+* **Gap & Strengths Analysis**: Generates structured feedback detailing matching candidate strengths, critical missing skills, and actionable recommendations.
+* **Persistent History**: Automatically serializes analysis records to MongoDB via `AnalysisResult` for historical tracking.
 
 ### [02] Subject Technical Interview Practice
-* **Domain Matrix**: Supports tailored testing across Computer Science core domains: Python, JavaScript, MERN Full Stack, DevOps, Java, C++, System Design, Data Structures & Algorithms, and Database Management.
-* **Dynamic Problem Synthesis**: Synthesizes 5 subject-specific questions per assessment session with varying difficulty tiers.
-* **Quantitative Answer Evaluation**: Evaluates candidate submitted code and text answers, computing individual question scores, overall session percentage, and ideal reference solutions.
+* **Domain Matrix**: Supports tailored assessments across 11 core engineering domains: **Python, JavaScript, MERN Full Stack, DevOps, Java, React, Node.js, SQL, Docker, AWS, and Data Structures & Algorithms**.
+* **Dynamic Problem Synthesis**: Synthesizes **12** subject-specific interview questions per session using Groq AI.
+* **Quantitative Answer Evaluation**: Evaluates submitted responses, computing individual question verdicts (correct, partial, incorrect), suggestions, overall score (0–100), and strengths/weaknesses.
 * **Clean Formatting Standard**: Enforces clean academic markdown rendering free of informal symbols or emojis.
 
-### [03] Resume-Based Contextual Oral Exam
-* **Personalized CV Parsing**: Ingests the candidate's actual resume PDF to extract listed projects, open-source work, and specialized tech stacks.
-* **Project Ownership Testing**: Synthesizes 5 custom oral exam questions targeting the candidate's declared projects, testing architectural decisions, edge case handling, and implementation depth.
-* **Turn-by-Turn Assessment**: Accepts candidate answers, grades explanation accuracy, and archives overall contextual performance metrics.
+### [03] Resume-Based Contextual Interview
+* **Personalized CV Ingestion**: Reads the candidate's uploaded resume PDF to extract listed projects, skills, and technical background.
+* **Project Ownership Testing**: Synthesizes **12** custom technical questions probing architectural decisions, implementation depth, and edge cases from candidate-declared projects.
+* **Turn-by-Turn Evaluation**: Accepts written answers, assesses technical accuracy against candidate CV claims, and archives performance metrics.
 
 ### [04] Tech Buddy Research Assistant
-* **Ultra-Low Latency Inference**: Interactive technical companion powered by Groq GPT-OSS-120B.
-* **Multi-Domain Knowledge Base**: Provides assistance on algorithm optimization, system design trade-offs, code refactoring, and framework troubleshooting.
+* **Ultra-Low Latency Inference**: Interactive technical companion powered by Groq LLM inference.
+* **Multi-Domain Knowledge Base**: Provides consultation on algorithm optimization, system design trade-offs, code refactoring, and framework troubleshooting.
 * **Syntax-Highlighted Code Blocks**: Renders responses using `react-markdown`, `remark-gfm`, and `rehype-highlight` with monospaced code frame headers.
-* **Session Persistence**: Maintains thread history in MongoDB with single-click session resets.
+* **Session Persistence & Reset**: Maintains thread history in MongoDB (`Chat` & `ChatHistory`) with single-click session clearing.
 
 ### [05] Live Performance Analytics
-* **Central Command Dashboard**: Displays real-time candidate metrics, including average resume match scores, technical test averages, evaluation counts, and recent activity logs.
+* **Central Command Dashboard**: Displays real-time candidate metrics, fetching the latest resume match score, technical interview score, and resume interview score via `/api/dashboard/summary`.
 * **Circular Progress Indicators**: Utilizes `react-circular-progressbar` with theme-adaptive stroke contrast for instant visual feedback.
-* **Aggregated Activity Feed**: Pulls recent resume analyses and technical interview sessions via MongoDB aggregation pipelines.
+* **Account Controls**: Provides candidate profile metadata inspection and permanent account deletion with cascade data cleanup.
 
-### [06] Multi-Factor Security & OAuth
-* **HTTP-Only JWT Cookies**: Manages authenticated sessions using secure, HTTP-Only cookies to protect tokens against cross-site scripting (XSS) attacks.
+### [06] Multi-Factor Security & API Resilience
+* **Express Rate Limiter**: Protects AI-intensive endpoints against abuse and token budget exhaustion with an IP-based rate limiter (**20 requests per 15 minutes**).
+* **HTTP-Only JWT Cookies**: Manages authenticated sessions using secure, HTTP-Only cookies (`SameSite` enabled) to mitigate cross-site scripting (XSS).
 * **Google OAuth Integration**: Supports Google single sign-on using `@react-oauth/google` on the client and `google-auth-library` on the server for ID token verification.
-* **Account Linking System**: Tracks candidate auth methods using an `account: ['local', 'google']` enum field in the Mongoose `User` schema.
-* **Input Sanitization**: Protects against field injection and enforces strict schema validation across all API endpoints.
+* **Account Linking System**: Tracks candidate auth methods using an `accounts: ['local', 'google']` enum array in the Mongoose `User` schema.
+* **Helmet Security Headers**: Enforces strict Content Security Policy (CSP), HTTP Strict Transport Security (HSTS with 1-year max age), `X-Frame-Options: SAMEORIGIN`, and `X-Content-Type-Options: nosniff`.
 
 ---
 
@@ -52,12 +53,14 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 | Layer | Technologies Used |
 | :--- | :--- |
 | **Frontend Framework** | React 19, React Router v7, Vite |
-| **Styling & Aesthetics** | Vanilla CSS, Tailwind CSS, Framer Motion |
+| **Styling & Aesthetics** | Tailwind CSS v3, Framer Motion, Vanilla CSS |
 | **UI Components** | Lucide React, React Circular Progressbar, React Markdown, Rehype Highlight |
-| **Backend Runtime** | Node.js v22 (LTS), Express.js |
+| **Backend Runtime** | Node.js v22 (LTS), Express.js v4 |
 | **Database & ORM** | MongoDB, Mongoose v8 |
-| **AI Inference Engine** | Groq Cloud API (`openai/gpt-oss-120b`) || **Document Processing** | `pdf-parse` (Client-to-Server Multipart Upload) |
-| **Media Storage** | Cloudinary API, Multer Storage Engine |
+| **AI Inference Engine** | Groq Cloud SDK (`llama-3.1-8b-instant` / configurable via `GROQ_MODEL`) |
+| **API Protection** | `express-rate-limit` (20 req/15 min on AI routes), `helmet` (CSP, HSTS) |
+| **Document Processing** | `pdf-parse` (Client-to-Server Multipart Upload via Multer) |
+| **Media Storage** | Cloudinary API, Multer Memory Storage |
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`), Google Auth Library (`google-auth-library`), `bcryptjs` |
 | **Containerization** | Docker (`node:22-alpine`), Docker Compose (`mongo:7-jammy`) |
 
@@ -67,35 +70,33 @@ Built on top of a full-stack Node.js/Express and React 19 architecture, HireCore
 
 ```
 hirecore-os/
-├── docker-compose.yml           # Root Docker Orchestration Config
-├── DESIGN.md                    # Visual Identity & UI/UX System Guide
+├── docker-compose.yml           # Multi-container orchestration (Backend + MongoDB 7)
 ├── LICENSE                      # MIT Open Source License
 ├── CONTRIBUTION.md              # Code Style & PR Guidelines
-├── CONTRIBUTING.md              # Contribution Reference Pointer
-├── README.md                    # Institutional System Documentation
+├── README.md                    # System Documentation
+│
 ├── client/                      # React 19 Frontend Web Application
 │   ├── src/
-│   │   ├── components/          # Reusable Academic UI Components
+│   │   ├── components/          # UI & Context Components
 │   │   │   ├── AuthContext.jsx  # Global Auth & Modal Context
-│   │   │   ├── CustomCursor.jsx # Academic Precision Pointer (z-[100000])
-│   │   │   ├── HcLogo.jsx       # Institutional Brand Mark
+│   │   │   ├── HcLogo.jsx       # Brand Mark
 │   │   │   ├── Navbar.jsx       # Header Navigation Bar
 │   │   │   ├── Sidebar.jsx      # Navigation Menu
 │   │   │   ├── ThemeContext.jsx # Light/Dark Mode Manager
 │   │   │   └── ToastContext.jsx # Notification Alert System
 │   │   ├── hooks/               # Custom React Hooks
-│   │   │   └── useApi.js        # Axios Axios Instance Hook
+│   │   │   └── useApi.js        # Pre-configured Axios Hook
 │   │   ├── pages/               # Application Page Views
-│   │   │   ├── AboutPage.jsx    # Engineering Faculty Dossier
-│   │   │   ├── AuthModal.jsx    # Candidate Gateway Modal
+│   │   │   ├── AboutPage.jsx    # Developer & Faculty Dossier
+│   │   │   ├── AuthModal.jsx    # Login / Register Modal Dialog
 │   │   │   ├── Dashboard.jsx    # Live Performance Command Center
 │   │   │   ├── LandingPage.jsx  # System Architecture Overview
-│   │   │   ├── PrivacyPolicy.jsx # Privacy Policy (public, /privacy)
-│   │   │   ├── ResumeAnalyzer.jsx # Resume Alignment Engine
-│   │   │   ├── ResumeBasedInterview.jsx # Contextual CV Exam Simulator
+│   │   │   ├── PrivacyPolicy.jsx # Privacy Policy (/privacy)
+│   │   │   ├── SmartResumeAnalyzer.jsx # Resume Alignment Engine
+│   │   │   ├── ResumeBasedInterview.jsx # Contextual CV Interview Simulator
 │   │   │   ├── TechBuddy.jsx    # AI Research Assistant
 │   │   │   ├── TechInterviewPractice.jsx # Subject Exam Simulator
-│   │   │   └── TermsOfService.jsx # Terms of Service (public, /terms)
+│   │   │   └── TermsOfService.jsx # Terms of Service (/terms)
 │   │   ├── utils/
 │   │   │   └── api.js           # Pre-configured Axios Instance
 │   │   ├── App.jsx              # Routing & Layout Root
@@ -105,7 +106,7 @@ hirecore-os/
 │   └── package.json
 │
 └── server/                      # Express REST API Server
-    ├── Dockerfile               # Production Docker Container Specification (node:22-alpine)
+    ├── Dockerfile               # Production Dockerfile (node:22-alpine)
     ├── .dockerignore            # Build Context Exclusion Rules
     ├── config/
     │   ├── db.js                # MongoDB Mongoose Connection
@@ -113,17 +114,17 @@ hirecore-os/
     ├── middleware/
     │   ├── auth.js              # JWT HTTP-Only Cookie Verifier
     │   ├── upload.js            # Multer File Storage Handler
-    │   └── rateLimiter.js       # Express Rate Limiting Engine
+    │   └── rateLimiter.js       # Express Rate Limiting Middleware (20 req/15 min)
     ├── models/
-    │   ├── User.js              # Candidate Schema (Auth, Course, Account Types)
-    │   ├── AnalysisResult.js    # Resume Match Document Schema
-    │   ├── InterviewSession.js  # Technical & Resume Exam Records
-    │   └── ChatSession.js       # Tech Buddy Conversation History
+    │   ├── User.js              # User Schema (Auth, Accounts, Course, Tier)
+    │   ├── AnalysisResult.js    # Unified Evaluation Document Schema
+    │   ├── Chat.js              # Active Tech Buddy Conversation Schema
+    │   └── ChatHistory.js       # Historical Archived Chat Schema
     ├── routes/
     │   ├── auth.js              # Registration, Login, OAuth, Profile Endpoints
-    │   ├── dashboard.js         # Analytics Aggregation Endpoints
-    │   ├── resume.js            # Resume Parsing & AI Scoring Endpoint
-    │   ├── interview.js         # Domain Tech Exam Generator & Evaluator
+    │   ├── dashboard.js         # Analytics Aggregation Endpoint
+    │   ├── resumeAnalyzer.js    # Resume Parsing & Scoring Endpoint
+    │   ├── interviewPractice.js # Domain Tech Exam Generator & Evaluator
     │   ├── resumeInterview.js   # Resume Contextual Exam Endpoints
     │   └── techBuddy.js         # AI Chat Assistant Endpoints
     ├── utils/
@@ -140,45 +141,44 @@ hirecore-os/
 ## 4. API Specification Reference
 
 ### Authentication Endpoints (`/api/auth`)
-* `POST /api/auth/register` — Registers candidate with `name`, `email`, `password`, `course`, and optional `profilePic` image file. Sets HTTP-Only JWT cookie.
-* `POST /api/auth/login` — Authenticates candidate via local email and password. Sets HTTP-Only JWT cookie.
-* `POST /api/auth/google` — Verifies Google OAuth ID token credential via `google-auth-library`. Creates or updates user account and sets HTTP-Only JWT cookie.
-* `GET /api/auth/me` — Fetches current authenticated candidate profile.
+* `POST /api/auth/register` — Registers candidate with `name`, `email`, `password`, `course`, and optional `profilePic` image. Sets HTTP-Only JWT cookie.
+* `POST /api/auth/login` — Authenticates candidate via email and password. Sets HTTP-Only JWT cookie.
+* `POST /api/auth/google` — Verifies Google OAuth credential token via `google-auth-library`. Sets HTTP-Only JWT cookie.
+* `GET /api/auth/me` — Fetches current authenticated user profile (`protect` middleware).
 * `POST /api/auth/logout` — Clears HTTP-Only authentication cookie.
-* `DELETE /api/auth/delete` — Deletes current candidate account and associated database records.
+* `DELETE /api/auth/delete` — Permanently deletes candidate account, evaluation records, and chat history.
 
 ### Dashboard Analytics (`/api/dashboard`)
-* `GET /api/dashboard/stats` — Returns overall aggregated candidate metrics (average resume score, average interview score, test counts).
-* `GET /api/dashboard/recent-analyses` — Retrieves recent resume evaluation records.
-* `GET /api/dashboard/recent-interviews` — Retrieves recent technical interview session records.
+* `GET /api/dashboard/summary` — Retrieves the latest evaluation metrics across all three tools: Resume Analyzer score, Subject Interview score, and Contextual Resume Interview score.
 
-### Resume Evaluation (`/api/resume`)
-* `POST /api/resume/analyze` — Multipart endpoint receiving `resume` PDF file and `jobDescription` string. Returns structured JSON containing match score, strengths, missing skills, and detailed feedback.
+### Resume Evaluation (`/api/resume-analyzer`)
+* `POST /api/resume-analyzer` — Protected endpoint (`checkJwt`, `syncUser`, `aiLimiter`). Accepts multipart `resume` PDF and `jobDescription` string. Returns match score (0–100), pros, cons, and granular feedback.
 
 ### Subject Technical Interview (`/api/interview`)
-* `POST /api/interview/generate` — Ingests `technology` domain and returns 5 generated technical exam questions.
-* `POST /api/interview/submit` — Ingests candidate submitted answers, computes scoring, and stores interview session record.
+* `POST /api/interview/generate` — Protected endpoint (`checkJwt`, `syncUser`, `aiLimiter`). Ingests `technology` (one of 11 supported domains) and returns **12** technical interview questions.
+* `POST /api/interview/evaluate` — Protected endpoint (`checkJwt`, `syncUser`, `aiLimiter`). Ingests candidate submitted responses, grades each response, stores the session in `AnalysisResult`, and returns the score breakdown.
 
 ### Contextual Resume Interview (`/api/resume-interview`)
-* `POST /api/resume-interview/generate` — Multipart endpoint receiving candidate `resume` PDF file. Extracts projects/skills and returns 5 personalized contextual questions.
-* `POST /api/resume-interview/submit` — Grades candidate oral answers against contextual reference metrics.
+* `POST /api/resume-interview/generate` — Protected endpoint (`checkJwt`, `syncUser`, `aiLimiter`). Ingests `resume` PDF file, parses projects/skills, and returns **12** personalized technical questions.
+* `POST /api/resume-interview/evaluate` — Protected endpoint (`checkJwt`, `syncUser`, `aiLimiter`). Ingests candidate answers, cross-references against resume claims, stores evaluation in `AnalysisResult`, and returns feedback.
 
 ### AI Assistant (`/api/tech-buddy`)
-* `POST /api/tech-buddy/message` — Ingests candidate message string, queries Groq AI inference model, updates persistent chat thread, and returns AI response.
-* `POST /api/tech-buddy/reset` — Clears candidate's active chat thread history.
+* `POST /api/tech-buddy/chat` — Protected endpoint (`protect`, `aiLimiter`). Accepts a user `message`, appends it to user's conversation thread, queries Groq AI, and returns the response.
+* `GET /api/tech-buddy/history` — Protected endpoint (`protect`). Retrieves message history for the candidate's active chat session.
+* `POST /api/tech-buddy/clear` — Protected endpoint (`protect`). Archives/resets the active conversation session and starts a fresh thread.
 
 ---
 
 ## 5. System Design & Aesthetic Standard
 
-HireCore OS follows a **Scholarly Academic Paper** design language — hard geometry, ink-on-paper contrast, editorial typography, and motion with restraint. Below is a structured summary; the full specification lives in **[DESIGN.md](./DESIGN.md)**.
+HireCore OS follows a **Scholarly Academic Paper** design language — hard geometry, ink-on-paper contrast, editorial typography, and motion with restraint.
 
 ### 5.1 Design Philosophy
-* **Strict zero radius** — `border-radius: 0px !important` applied globally in CSS and all Tailwind tokens remapped to `0px`.
+* **Strict zero radius** — `border-radius: 0px !important` applied globally in CSS across all elements.
 * **Typographic hierarchy** — Serif body (`Libertinus Serif` / `EB Garamond` / Georgia) paired with monospaced metadata labels (`JetBrains Mono`).
-* **No informal elements** — No emojis, no casual placeholders, no rounded "bubble" UI.
-* **Border-over-shadow** — Elevation is communicated through bordered containment, not drop shadows (all shadow tokens resolve to `none`).
-* **Restrained motion** — Framer Motion animations only where they communicate state.
+* **No informal elements** — No emojis, no rounded "bubble" UI, no casual styling.
+* **Border-over-shadow** — Elevation is communicated through crisp bordered containment rather than drop shadows.
+* **Restrained motion** — Framer Motion animations only where they communicate functional state.
 
 ### 5.2 Color Tokens
 
@@ -194,40 +194,10 @@ HireCore OS follows a **Scholarly Academic Paper** design language — hard geom
 | `success` | `#15803D` | Positive evaluation feedback |
 | `error` | `#B91C1C` | Destructive / failure states |
 
-Theme switching uses a `.light` class on `<html>`, managed by `ThemeContext.jsx`. The Tailwind plugin registers a `light:` variant for dual-mode utility classes.
+Theme switching is managed via `ThemeContext.jsx` with dark-mode default and `.light` utility variants.
 
-### 5.3 Typography Scale
-
-| Family | Stack | Usage |
-| :--- | :--- | :--- |
-| **Serif** | `Libertinus Serif`, `EB Garamond`, Georgia | Body copy, all headings, UI labels |
-| **Monospace** | `JetBrains Mono`, Courier New | System badges, code blocks, metadata |
-
-Monospace system tags follow the `[NAMESPACE // SECTION_LABEL]` convention — uppercase, `tracking-widest`, `text-accent`.
-
-### 5.4 Core Component Patterns
-
-* **System Tag Badge** — `inline-flex` pill with `bg-accent/10 border border-accent/30 text-accent font-mono text-xs uppercase tracking-widest`.
-* **Section Title** — `border-l-2 border-accent pl-4` left-rule with serif heading and optional mono sub-label.
-* **Card / Panel** — `border border-paper-800 bg-paper-900/50` — no shadow, no radius.
-* **Accent Callout Block** — `border border-accent/20 bg-accent/5` with `[LABEL]` mono header for explicit commitments or warnings.
-* **Metadata Grid** — Compact `grid` of key/value pairs in `font-mono text-xs` inside a bordered `bg-paper-950` panel.
-
-### 5.5 Motion
-
-* **Route transitions** — `opacity 0→1, y 8→0` / `opacity 1→0, y 0→-8` at `0.25s easeOut` via Framer Motion `AnimatePresence`.
-* **Splash screen** — Full-screen overlay with a `1.3s` progress bar, exits with a `[0.16, 1, 0.3, 1]` cubic-bezier spring.
-* **Toast notifications** — `animate-slide-in` CSS keyframe (`translateY(1rem) → 0`, `0.25s cubic-bezier(0.16, 1, 0.3, 1)`).
-
-### 5.6 Custom Cursor
-
-A canvas-rendered academic precision pointer in `CustomCursor.jsx` runs at `z-[100000]`. Active on `min-width: 768px`; native cursor is suppressed via `cursor: none !important` in `index.css`.
-
-### 5.7 Legal Routes
-
-`/privacy` ([PrivacyPolicy.jsx](./client/src/pages/PrivacyPolicy.jsx)) and `/terms` ([TermsOfService.jsx](./client/src/pages/TermsOfService.jsx)) are **public routes** (no authentication required) rendered in the same editorial design language as all other pages.
-
-> **Full reference**: See [DESIGN.md](./DESIGN.md) for complete color ramps, spacing guidelines, scrollbar spec, autofill neutralization, syntax highlighting configuration, and accessibility notes.
+### 5.3 Legal Routes
+`/privacy` ([PrivacyPolicy.jsx](./client/src/pages/PrivacyPolicy.jsx)) and `/terms` ([TermsOfService.jsx](./client/src/pages/TermsOfService.jsx)) are public routes accessible without authentication.
 
 ---
 
@@ -241,7 +211,7 @@ PORT=5000
 MONGO_URI=mongodb://localhost:27017/hirecore_os
 JWT_SECRET=your_secure_jwt_secret_key_here
 GROQ_API_KEY=your_groq_api_key_here
-GROQ_MODEL=openai/gpt-oss-120b
+GROQ_MODEL=llama-3.1-8b-instant
 GOOGLE_CLIENT_ID=your_google_client_id_here
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
@@ -265,14 +235,14 @@ VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
 * Node.js v22.0.0 or higher (LTS)
 * npm v9.0.0 or higher
 * Docker & Docker Compose (Optional)
-* MongoDB instance running locally or via MongoDB Atlas
+* MongoDB running locally or via MongoDB Atlas
 
 ### Option A: Local Native Setup
 
 1. **Clone Repository**:
    ```bash
    git clone https://github.com/ayushsoni30/CF.git
-   cd hirecore-os
+   cd CF
    ```
 
 2. **Start Backend Server**:
